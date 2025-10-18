@@ -1,147 +1,374 @@
-# Launcher Plus (Shortcuts)
+<div align="center">
 
-**Tujuan:** membuat *shortcut list* di VS Code / Cursor / Windsurf untuk membuka aplikasi Windows/Mac/Linux, menjalankan skrip, atau membuka dokumen (Word/PDF/dll) dengan cepat.
+# 🚀 Launcher Plus (Shortcuts)
 
-## Fitur
-- Panel **Shortcuts** (TreeView) di Explorer.
-- **QuickPick** (Command Palette): cari & jalankan shortcut.
-- **Variables**: `${file}`, `${workspaceFolder}`, `${relativeFile}`, `${lineNumber}`, `${selectedText}`.
-- **Default open**: kalau `program` kosong, file/arg pertama dibuka dengan *default app* OS (start/open/xdg-open).
-- **Recent items** (disimpan di `globalState`, limit di pengaturan).
-- **Keybinding** default: `Ctrl+Alt+L` (`Cmd+Alt+L` di macOS) membuka QuickPick.
-- Konfigurasi bisa global atau per-workspace.
+**Powerful shortcut manager for VS Code, Cursor, and Windsurf**
 
-## Instalasi
-1. Ekstrak ZIP ini.
-2. Jalankan `npm install` (opsional untuk build).
-3. `npm run compile` untuk membangun ke `out/`.
-4. **F5** di VS Code untuk start *Extension Development Host*, atau `vsce package` untuk `.vsix` lalu *Install from VSIX* (VS Code/Cursor/Windsurf).
+[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://github.com/PutraAdiJaya/any-launcher-plus)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![CI](https://github.com/PutraAdiJaya/any-launcher-plus/workflows/CI/badge.svg)](https://github.com/PutraAdiJaya/any-launcher-plus/actions)
 
-## Konfigurasi
-Tambahkan ke **Settings (JSON)**:
+Launch applications, run scripts, and open documents directly from your editor with customizable shortcuts and automation workflows.
+
+[Quick Start](QUICKSTART.md) • [Features](#-features) • [Installation](#-installation) • [Configuration](#-configuration) • [Examples](#-examples) • [Contributing](CONTRIBUTING.md)
+
+</div>
+
+---
+
+## ✨ Features
+
+### Core Capabilities
+
+- **🌳 Tree View Panel** - Organized shortcuts in Explorer sidebar
+- **⚡ Quick Pick** - Fast command palette integration (`Ctrl+Alt+L`)
+- **🔧 Context Variables** - Dynamic path resolution with `${file}`, `${workspaceFolder}`, `${relativeFile}`, `${lineNumber}`, `${selectedText}`
+- **📂 Default App Handler** - Open files with OS default applications
+- **🕐 Recent Items** - Track and quickly access recently used shortcuts
+- **🎨 Custom Icons** - Use VS Code icons or custom images
+
+### Advanced Features
+
+- **🔄 Sequence Execution** - Chain multiple commands (serial or parallel)
+- **👥 Profile Management** - Filter shortcuts by active profile (dev, ops, etc.)
+- **🔍 Auto-Discovery** - Automatically detect installed apps (Chrome, Office, Git Bash, WSL)
+- **📤 Import/Export** - Share configurations across workspaces
+- **⚙️ Task Generation** - Convert shortcuts to VS Code tasks
+- **✏️ Visual Editor** - Edit shortcuts with built-in webview editor
+
+### Cross-Platform Support
+
+- ✅ Windows
+- ✅ macOS  
+- ✅ Linux
+- ✅ Compatible with VS Code, Cursor, Windsurf, and other VS Code variants
+
+---
+
+## 📦 Installation
+
+### From VSIX (Recommended)
+
+1. Download the latest `.vsix` file from releases
+2. Open VS Code/Cursor/Windsurf
+3. Run command: `Extensions: Install from VSIX...`
+4. Select the downloaded file
+
+### From Source
+
+```bash
+git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
+cd YOUR_REPOSITORY
+npm install
+npm run compile
+npm run package
+```
+
+Then install the generated `.vsix` file.
+
+---
+
+## ⚙️ Configuration
+
+### Basic Setup
+
+Add shortcuts to your settings (JSON):
+
 ```json
 {
   "launcher.shortcuts": [
     {
-      "id": "open-doc-default",
-      "label": "Open in Default App",
-      "program": "",
+      "id": "open-browser",
+      "label": "Open in Chrome",
+      "icon": "browser",
+      "program": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
       "args": ["${file}"],
-      "cwd": "${workspaceFolder}",
-      "env": {},
-      "runAsAdmin": false,
-      "when": "",
       "platform": "win"
     },
     {
-      "id": "open-downloads",
-      "label": "Open Downloads Folder",
-      "program": "explorer.exe",
-      "args": ["C:\\\\Users\\\\%USERNAME%\\\\Downloads"],
-      "platform": "win"
-    },
-    {
-      "id": "open-chrome",
-      "label": "Google Chrome (this file URL)",
-      "program": "C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe",
-      "args": ["${file}"]
+      "id": "open-terminal",
+      "label": "Open Terminal Here",
+      "icon": "terminal",
+      "program": "wt.exe",
+      "args": ["-d", "${workspaceFolder}"]
     }
   ]
 }
 ```
 
-### Keybindings (opsional)
+### Shortcut Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `id` | string | Unique identifier (required) |
+| `label` | string | Display name (required) |
+| `program` | string | Executable path (empty = OS default handler) |
+| `args` | string[] | Command arguments |
+| `cwd` | string | Working directory |
+| `env` | object | Environment variables |
+| `icon` | string | Icon name (codicon) or file path |
+| `platform` | string | Target platform: `win`, `mac`, `linux` |
+| `when` | string | Condition (e.g., `resourceLangId == python`) |
+| `profile` | string | Profile name for filtering |
+| `sequence` | array | Multiple commands to execute |
+| `sequenceMode` | string | Execution mode: `serial` or `parallel` |
+| `runAsAdmin` | boolean | Windows admin elevation (shows warning) |
+
+### Available Variables
+
+- `${file}` - Current file path
+- `${workspaceFolder}` - Workspace root path
+- `${relativeFile}` - File path relative to workspace
+- `${lineNumber}` - Current cursor line number
+- `${selectedText}` - Currently selected text
+
+---
+
+## 📚 Examples
+
+### Open File with Default App
+
+```json
+{
+  "id": "open-default",
+  "label": "Open in Default App",
+  "program": "",
+  "args": ["${file}"]
+}
+```
+
+### Multi-Step Workflow (Serial)
+
+```json
+{
+  "id": "daily-routine",
+  "label": "Daily Startup Routine",
+  "icon": "rocket",
+  "sequence": [
+    {"program": "chrome.exe", "args": ["https://mail.google.com"]},
+    {"program": "explorer.exe", "args": ["C:\\Users\\%USERNAME%\\Downloads"]},
+    {"program": "code", "args": ["C:\\Projects"]}
+  ]
+}
+```
+
+### Parallel Execution
+
+```json
+{
+  "id": "dev-environment",
+  "label": "Start Dev Environment",
+  "icon": "server",
+  "sequenceMode": "parallel",
+  "sequence": [
+    {"program": "docker-compose", "args": ["up"], "cwd": "${workspaceFolder}"},
+    {"program": "npm", "args": ["run", "dev"], "cwd": "${workspaceFolder}"}
+  ]
+}
+```
+
+### Profile-Based Shortcuts
+
+```json
+{
+  "id": "ops-tools",
+  "label": "Operations Dashboard",
+  "profile": "ops",
+  "icon": "dashboard",
+  "sequence": [
+    {"program": "bash", "args": ["-c", "htop"]},
+    {"program": "powershell", "args": ["-NoLogo"]}
+  ]
+}
+```
+
+Set active profile: `"launcher.activeProfile": "ops"`
+
+---
+
+## 🎯 Usage
+
+### Commands
+
+Access via Command Palette (`Ctrl+Shift+P`):
+
+- `Launcher: Open Shortcuts` - Show quick pick menu
+- `Launcher: Run Shortcut by ID` - Execute specific shortcut
+- `Launcher: Open Settings` - Configure shortcuts
+- `Launcher: Open Shortcut Editor` - Visual editor
+- `Launcher: Import Shortcuts (JSON)` - Import configuration
+- `Launcher: Export Shortcuts (JSON)` - Export configuration
+- `Launcher: Set Active Profile` - Switch profile
+- `Launcher: Generate tasks.json from Shortcuts` - Create VS Code tasks
+- `Launcher: Rescan Auto-Discovered Apps` - Refresh app detection
+
+### Keybindings
+
+Default: `Ctrl+Alt+L` (macOS: `Cmd+Alt+L`) - Open quick pick
+
+Custom keybindings:
+
 ```json
 [
-  { "key": "ctrl+alt+shift+1", "command": "launcher.run", "args": "open-doc-default" },
-  { "key": "ctrl+alt+shift+2", "command": "launcher.run", "args": "open-downloads" }
+  { "key": "ctrl+alt+1", "command": "launcher.run", "args": "open-browser" },
+  { "key": "ctrl+alt+2", "command": "launcher.run", "args": "open-terminal" }
 ]
 ```
 
-## Catatan
-- **Run as Admin**: saat ini menampilkan peringatan. Jalankan VS Code sebagai Administrator jika perlu.
-- **Keamanan**: periksa path/args sebelum menjalankan shortcut dari workspace publik.
-- **Kompatibilitas**: Dirancang agar bekerja di VS Code, Cursor, dan Windsurf (gunakan **Open VSX** atau file `.vsix`).
+### Tree View
 
-## Roadmap
-- Elevasi admin (Windows) terotomasi.
-- Import/Export profil shortcut.
-- Auto-discover aplikasi umum (Chrome/Office/Git Bash/WSL).
-- Multi-target (jalankan beberapa shortcut paralel/serial).
+Shortcuts appear in the Explorer sidebar. Click any item to execute it.
 
-Lisensi: MIT
+---
 
-## Fitur baru (improvisasi)
-- **Auto-discover apps** (opsional): Chrome, Office, Notepad, Explorer, dll → muncul di QuickPick & TreeView jika aplikasi terpasang.
-- **Import/Export Shortcuts**: simpan/restore konfigurasi ke/dari JSON.
-- **Multi-target (sequence)**: jalankan beberapa target berurutan (id shortcut lain atau langkah inline).
-- **Icon per item**: gunakan codicon (mis. `rocket`, `terminal`, `file-pdf`) atau path ikon PNG/SVG lokal.
+## 📖 Documentation
 
-### Contoh shortcut dengan `sequence` dan `icon`
+### Auto-Discovery
+
+Enable automatic detection of common applications:
+
 ```json
 {
-  "id": "daily-start",
-  "label": "Daily Start (Chrome + Downloads)",
-  "icon": "rocket",
-  "sequence": [
-    {"program": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "args": ["https://inbox.google.com"]},
-    {"program": "explorer.exe", "args": ["C:\\Users\\%USERNAME%\\Downloads"]}
-  ]
+  "launcher.enableAutoDiscover": true,
+  "launcher.autoDiscoverPlatforms": ["win", "mac", "linux"]
 }
 ```
 
+Detected apps include:
 
-## Fitur tambahan
-- **Profiles**: tambahkan `"profile"` pada shortcut, dan set `launcher.activeProfile` untuk memfilter.
-- **Parallel sequence**: set `"sequenceMode": "parallel"` agar langkah-langkah dieksekusi bersamaan.
-- **Generate tasks.json**: perintah *Launcher: Generate tasks.json from Shortcuts* membuat task `shell` untuk setiap shortcut.
-- **Workspace import/export**: simpan/ambil shortcuts ke **Workspace Settings**.
+- **Windows**: Chrome, Edge, Office Suite, Notepad, Git Bash, WSL, PowerShell
+- **macOS**: Safari, Chrome, Terminal
+- **Linux**: Common browsers and terminals
 
-### Contoh shortcut dengan profile & parallel
-```json
-{
-  "id": "ops-start",
-  "label": "Ops Start",
-  "profile": "ops",
-  "sequenceMode": "parallel",
-  "sequence": [
-    {"program": "C:\\Program Files\\Git\\bin\\bash.exe", "args": ["-lc", "htop"]},
-    {"program": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "args": ["-NoLogo"]}
-  ]
-}
-```
+### Import/Export
 
+**Export to file:**
 
-## Editor (Webview)
-Gunakan **Launcher: Open Shortcut Editor** untuk mengedit daftar shortcuts via form berbasis JSON textarea (validasi sederhana) dan simpan langsung ke Settings.
+1. Run `Launcher: Export Shortcuts (JSON)`
+2. Choose save location
 
-## CI Publish (Open VSX / VSCE)
-Workflow GitHub Actions disertakan di `.github/workflows/release.yml`. Siapkan secrets:
-- `OVSX_TOKEN` untuk publish ke Open VSX
-- `VSCE_PAT` untuk publish ke VS Code Marketplace (opsional; jika kamu ingin dual publish)
+**Import from file:**
 
-Jalankan manual:
+1. Run `Launcher: Import Shortcuts (JSON)`
+2. Select JSON file
+
+**Workspace-specific:**
+
+- Use `Launcher: Export/Import Shortcuts to/into Workspace` for project-level configs
+
+### Task Generation
+
+Convert shortcuts to VS Code tasks for integration with build systems:
+
+1. Run `Launcher: Generate tasks.json from Shortcuts`
+2. Tasks are created in `.vscode/tasks.json`
+3. Each shortcut becomes a `shell` task with label `launcher:{id}`
+
+---
+
+## 🔒 Security
+
+⚠️ **Important Security Notes:**
+
+- Always verify `program` paths and `args` before running shortcuts from untrusted workspaces
+- Admin elevation (`runAsAdmin`) shows a warning - run your editor as administrator if needed
+- Be cautious with shortcuts that execute shell commands or scripts
+- Review imported configurations before applying them
+
+---
+
+## 🛠️ Development
+
+### Build from Source
+
 ```bash
+# Install dependencies
+npm install
+
+# Compile TypeScript
 npm run compile
-npx vsce package
-npm run publish:ovsx   # butuh OVSX_TOKEN
+
+# Watch mode
+npm run watch
+
+# Package extension
+npm run package
+
+# Lint code
+npm run lint
+
+# Format code
+npm run format
 ```
 
+### Publishing
 
-## Contoh Konfigurasi (Examples)
-Lihat folder **/examples**:
-- `windows_basic.json` – shortcut dasar Windows (default app, Explorer Downloads, Chrome).  
-- `profiles_ops_dev.json` – contoh penggunaan **profile** (`ops` vs `dev`) + parallel sequence.  
-- `nested_sequence_mix.json` – contoh **nested sequence** (gabungan serial & parallel) untuk rutinitas pagi.
+```bash
+# Publish to Open VSX
+npm run publish:ovsx
 
-Cara pakai:
-1. Buka **Launcher: Open Shortcut Editor** → paste isi file example ke editor → **Save**.  
-   atau
-2. **Launcher: Import Shortcuts (User/Workspace)** → pilih file example.
+# Publish to VS Code Marketplace
+npm run publish:vsce
+```
 
+Requires tokens: `OVSX_TOKEN` and `VSCE_PAT`
 
-## Universal Variant (v0.6)
-- **Deteksi varian**: VS Code / Windsurf / Cursor / Kiro / Qoder / Trae (heuristik env var).
-- **Status bar**: tombol `Launcher Plus` untuk QuickPick + tooltip varian yang terdeteksi.
-- **Dual manifest**: `npm run build:manifests` menghasilkan `manifest-vscode.json` dan `manifest-openvsx.json`.
-- **Package keduanya**: `npm run package:both` → `.vsix` untuk Marketplace & Open VSX.
+---
+
+## 🗺️ Roadmap
+
+- [ ] Automated Windows admin elevation
+- [ ] Shortcut templates library
+- [ ] Cloud sync for configurations
+- [ ] Macro recording
+- [ ] Conditional execution based on file types
+- [ ] Integration with external task runners
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on:
+
+- Code of conduct
+- Development setup
+- Coding standards
+- Pull request process
+- Testing requirements
+
+Quick start for contributors:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes and test thoroughly
+4. Run `npm run lint` and `npm run format`
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 💬 Support
+
+- 📖 [Quick Start Guide](QUICKSTART.md) - Get started in 5 minutes
+- 📧 [Report Issues](https://github.com/PutraAdiJaya/any-launcher-plus/issues) - Bug reports and feature requests
+- 💬 [Discussions](https://github.com/PutraAdiJaya/any-launcher-plus/discussions) - Questions and community support
+- 🔒 [Security Policy](SECURITY.md) - Report security vulnerabilities
+- 🚀 [Deployment Guide](DEPLOYMENT.md) - For maintainers
+- ⭐ Star the repo if you find it useful!
+
+---
+
+<div align="center">
+
+**Made with ❤️ for the VS Code community**
+
+[⬆ Back to Top](#-launcher-plus-shortcuts)
+
+</div>

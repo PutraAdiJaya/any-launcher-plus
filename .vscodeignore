@@ -1,5 +1,34 @@
+# Git and version control
 .git/
+.github/
+.gitignore
+
+# Development files
 .vscode/
-node_modules/
-**/*.map
+.vscode-test/
 src/
+tsconfig.json
+eslint.config.js
+.prettierrc.json
+.prettierignore
+
+# Dependencies
+node_modules/
+
+# Build artifacts
+**/*.map
+*.vsix
+
+# Spec story
+.specstory/
+
+# Scripts
+scripts/
+
+# Documentation (keep only essential)
+# Keep: README.md, CHANGELOG.md, LICENSE
+
+# Misc
+.DS_Store
+*.log
+npm-debug.log*

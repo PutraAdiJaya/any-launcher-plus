@@ -7,17 +7,17 @@ import * as fs from 'fs';
 type Shortcut = {
   id: string;
   label: string;
-  program?: string;           // if empty -> default app
+  program?: string; // if empty -> default app
   args?: string[];
   cwd?: string;
-  env?: Record<string,string>;
-  runAsAdmin?: boolean;       // Windows only (not implemented; prompt hint)
-  when?: string;              // simple condition: resourceLangId == xyz
-  platform?: 'win'|'mac'|'linux'|'';
+  env?: Record<string, string>;
+  runAsAdmin?: boolean; // Windows only (not implemented; prompt hint)
+  when?: string; // simple condition: resourceLangId == xyz
+  platform?: 'win' | 'mac' | 'linux' | '';
   icon?: string;
-  sequence?: (string | Omit<Shortcut,'id'|'label'>)[];
+  sequence?: (string | Omit<Shortcut, 'id' | 'label'>)[];
   profile?: string;
-  sequenceMode?: 'serial'|'parallel';
+  sequenceMode?: 'serial' | 'parallel';
 };
 
 function getConfigShortcuts(): Shortcut[] {
@@ -47,7 +47,10 @@ function whenOk(s: Shortcut): boolean {
   return true;
 }
 
-function resolveVars(t: string, ctx: {file?: string, workspaceFolder?: string, selectedText?: string, lineNumber?: number, relativeFile?: string}): string {
+function resolveVars(
+  t: string,
+  ctx: { file?: string; workspaceFolder?: string; selectedText?: string; lineNumber?: number; relativeFile?: string }
+): string {
   return t
     .replace(/\$\{file\}/g, ctx.file ?? '')
     .replace(/\$\{workspaceFolder\}/g, ctx.workspaceFolder ?? '')
@@ -64,13 +67,18 @@ function pickContext() {
   const selectedText = editor ? editor.document.getText(editor.selection) : undefined;
   const lineNumber = editor ? editor.selection.active.line + 1 : undefined;
   const relativeFile = file && ws ? path.relative(ws, file) : undefined;
-  return {file, workspaceFolder: ws, selectedText, lineNumber, relativeFile};
+  return { file, workspaceFolder: ws, selectedText, lineNumber, relativeFile };
 }
 
 function spawnDefaultOpen(target: string, cwd?: string) {
   // Open file/folder with OS default handler
   if (process.platform === 'win32') {
-    cp.spawn('cmd', ['/c', 'start', '', target], { cwd, detached: true, windowsVerbatimArguments: true, stdio: 'ignore' }).unref();
+    cp.spawn('cmd', ['/c', 'start', '', target], {
+      cwd,
+      detached: true,
+      windowsVerbatimArguments: true,
+      stdio: 'ignore',
+    }).unref();
   } else if (process.platform === 'darwin') {
     cp.spawn('open', [target], { cwd, detached: true, stdio: 'ignore' }).unref();
   } else {
@@ -88,7 +96,7 @@ function runShortcut(s: Shortcut): void {
       return;
     }
     // Resolve args
-    const args = (s.args || []).map(a => resolveVars(a, ctx)).filter(a => a.length > 0);
+    const args = (s.args || []).map((a) => resolveVars(a, ctx)).filter((a) => a.length > 0);
     if (!s.program || s.program.trim().length === 0) {
       // default open for first arg or current file
       const target = args[0] || (ctx.file ?? cwd);
@@ -97,7 +105,9 @@ function runShortcut(s: Shortcut): void {
     }
     const program = resolveVars(s.program, ctx);
     if (process.platform === 'win32' && s.runAsAdmin) {
-      vscode.window.showWarningMessage('Run as Admin belum diimplementasikan otomatis. Jalankan VS Code sebagai Administrator untuk shortcut ini.');
+      vscode.window.showWarningMessage(
+        'Run as Admin belum diimplementasikan otomatis. Jalankan VS Code sebagai Administrator untuk shortcut ini.'
+      );
     }
     // spawn and listen for errors (e.g., ENOENT)
     try {
@@ -106,12 +116,16 @@ function runShortcut(s: Shortcut): void {
         vscode.window.showErrorMessage(`Failed to start "${s.label}": ${err?.message ?? String(err)}`);
       });
       // detach if possible
-      try { child.unref(); } catch {}
-    } catch (spawnErr: any) {
-      vscode.window.showErrorMessage(`Gagal menjalankan "${s.label}": ${spawnErr?.message ?? String(spawnErr)}`);
+      try {
+        child.unref();
+      } catch {}
+    } catch (spawnErr) {
+      const error = spawnErr as Error;
+      vscode.window.showErrorMessage(`Gagal menjalankan "${s.label}": ${error?.message ?? String(spawnErr)}`);
     }
-  } catch (err: any) {
-    vscode.window.showErrorMessage(`Gagal menjalankan "${s.label}": ${err?.message ?? String(err)}`);
+  } catch (err) {
+    const error = err as Error;
+    vscode.window.showErrorMessage(`Gagal menjalankan "${s.label}": ${error?.message ?? String(err)}`);
   }
 }
 
@@ -119,7 +133,9 @@ class ShortcutsProvider implements vscode.TreeDataProvider<ShortcutItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<void>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
-  refresh() { this._onDidChangeTreeData.fire(); }
+  refresh() {
+    this._onDidChangeTreeData.fire();
+  }
 
   getTreeItem(element: ShortcutItem): vscode.TreeItem {
     return element;
@@ -128,9 +144,14 @@ class ShortcutsProvider implements vscode.TreeDataProvider<ShortcutItem> {
   // element is optional; when provided we have no children because shortcuts are leaves
   getChildren(element?: ShortcutItem): Thenable<ShortcutItem[]> {
     if (element) return Promise.resolve([]);
-    const items = [...getConfigShortcuts(), ...autoDiscoveredShortcuts(), ...autoDiscoveredShells(), ...autoDiscoveredEditors()]
-      .filter(s => platformOk(s) && whenOk(s) && profileOk(s))
-      .map(s => new ShortcutItem(s));
+    const items = [
+      ...getConfigShortcuts(),
+      ...autoDiscoveredShortcuts(),
+      ...autoDiscoveredShells(),
+      ...autoDiscoveredEditors(),
+    ]
+      .filter((s) => platformOk(s) && whenOk(s) && profileOk(s))
+      .map((s) => new ShortcutItem(s));
     return Promise.resolve(items);
   }
 }
@@ -139,22 +160,22 @@ class ShortcutItem extends vscode.TreeItem {
   constructor(public readonly s: Shortcut) {
     super(s.label || s.id, vscode.TreeItemCollapsibleState.None);
     this.contextValue = 'shortcutItem';
-    this.tooltip = `${s.program || '(default app)'} ${(s.args||[]).join(' ')}`;
+    this.tooltip = `${s.program || '(default app)'} ${(s.args || []).join(' ')}`;
     // pass the full Shortcut object so commands can run both configured and auto-discovered shortcuts
     this.command = { command: 'launcher.run', title: 'Run Shortcut', arguments: [s] };
     this.iconPath = resolveIcon(s.icon);
   }
 }
 
-
-
-function resolveIcon(icon?: string): any {
+function resolveIcon(icon?: string): vscode.ThemeIcon | vscode.Uri {
   if (!icon) return new vscode.ThemeIcon('rocket');
   // If looks like a path, try use file icon
   if (/[\\/]/.test(icon) || icon.startsWith('.')) {
     try {
       return vscode.Uri.file(icon);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
   return new vscode.ThemeIcon(icon);
 }
@@ -171,7 +192,13 @@ function autoDiscoveredShortcuts(): Shortcut[] {
   function pushIfExists(label: string, program: string, args?: string[]) {
     try {
       if (fs.existsSync(program)) {
-        list.push({ id: `auto-${label.toLowerCase().replace(/\\s+/g,'-')}`, label, program, args, platform: undefined });
+        list.push({
+          id: `auto-${label.toLowerCase().replace(/\\s+/g, '-')}`,
+          label,
+          program,
+          args,
+          platform: undefined,
+        });
       }
     } catch {}
   }
@@ -196,7 +223,7 @@ function autoDiscoveredShortcuts(): Shortcut[] {
 async function exportShortcuts() {
   const cfg = vscode.workspace.getConfiguration();
   const shortcuts = cfg.get<Shortcut[]>('launcher.shortcuts', []);
-  const uri = await vscode.window.showSaveDialog({ filters: { 'JSON': ['json'] }, saveLabel: 'Export Shortcuts' });
+  const uri = await vscode.window.showSaveDialog({ filters: { JSON: ['json'] }, saveLabel: 'Export Shortcuts' });
   if (!uri) return;
   await vscode.workspace.fs.writeFile(uri, Buffer.from(JSON.stringify(shortcuts, null, 2), 'utf8'));
   vscode.window.showInformationMessage('Shortcuts exported.');
@@ -204,7 +231,11 @@ async function exportShortcuts() {
 
 async function importShortcuts() {
   const cfg = vscode.workspace.getConfiguration();
-  const pick = await vscode.window.showOpenDialog({ canSelectMany: false, filters: { 'JSON': ['json'] }, openLabel: 'Import Shortcuts' });
+  const pick = await vscode.window.showOpenDialog({
+    canSelectMany: false,
+    filters: { JSON: ['json'] },
+    openLabel: 'Import Shortcuts',
+  });
   if (!pick || !pick[0]) return;
   const data = await vscode.workspace.fs.readFile(pick[0]);
   try {
@@ -215,56 +246,63 @@ async function importShortcuts() {
     } else {
       vscode.window.showErrorMessage('Invalid JSON format.');
     }
-  } catch (e:any) {
-    vscode.window.showErrorMessage('Import failed: ' + (e?.message ?? String(e)));
+  } catch (e) {
+    const error = e as Error;
+    vscode.window.showErrorMessage('Import failed: ' + (error?.message ?? String(e)));
   }
 }
 
-async function runSequence(seq: (string | Omit<Shortcut,'id'|'label'>)[], all: Shortcut[], mode: 'serial'|'parallel' = 'serial') {
+type SequenceStep = string | (Omit<Shortcut, 'id' | 'label'> & { sequence?: SequenceStep[]; sequenceMode?: 'serial' | 'parallel' });
+
+async function runSequence(
+  seq: SequenceStep[],
+  all: Shortcut[],
+  mode: 'serial' | 'parallel' = 'serial'
+) {
   if (mode === 'parallel') {
     const proms: Promise<void>[] = [];
     for (const step of seq) {
-      proms.push((async () => {
-    let s: Shortcut | undefined;
-    if (typeof step === 'string') {
-      s = all.find(x => x.id === step);
-    } else {
-      // inline step: allow program/args/cwd/env/platform/when/runAsAdmin
-      s = { id: 'inline', label: 'inline', ...step };
-    }
-    if (s) {
-        if (isGroupStep(step)) {
-          const grp:any = step as any;
-          await runSequence(grp.sequence, all, (grp.sequenceMode || 'serial'));
-        } else {
-          runShortcut(s);
-        }
-      }
-      })());
+      proms.push(
+        (async () => {
+          let s: Shortcut | undefined;
+          if (typeof step === 'string') {
+            s = all.find((x) => x.id === step);
+          } else {
+            // inline step: allow program/args/cwd/env/platform/when/runAsAdmin
+            s = { id: 'inline', label: 'inline', ...step };
+          }
+          if (s) {
+            if (isGroupStep(step)) {
+              const grp = step as Omit<Shortcut, 'id' | 'label'> & { sequence: SequenceStep[]; sequenceMode?: 'serial' | 'parallel' };
+              await runSequence(grp.sequence, all, grp.sequenceMode || 'serial');
+            } else {
+              runShortcut(s);
+            }
+          }
+        })()
+      );
     }
     await Promise.all(proms);
   } else {
     for (const step of seq) {
       let s: Shortcut | undefined;
       if (typeof step === 'string') {
-        s = all.find(x => x.id === step);
+        s = all.find((x) => x.id === step);
       } else {
         s = { id: 'inline', label: 'inline', ...step } as Shortcut;
       }
       if (s) {
         if (isGroupStep(step)) {
-          const grp:any = step as any;
-          await runSequence(grp.sequence, all, (grp.sequenceMode || 'serial'));
+          const grp = step as Omit<Shortcut, 'id' | 'label'> & { sequence: SequenceStep[]; sequenceMode?: 'serial' | 'parallel' };
+          await runSequence(grp.sequence, all, grp.sequenceMode || 'serial');
         } else {
           runShortcut(s);
         }
-        await new Promise(res => setTimeout(res, 200));
+        await new Promise((res) => setTimeout(res, 200));
       }
     }
   }
 }
-
-
 
 // --- PROFILES ---
 function profileOk(s: Shortcut): boolean {
@@ -283,19 +321,28 @@ async function generateTasksFromShortcuts() {
   }
   const tasksUri = vscode.Uri.joinPath(ws.uri, '.vscode', 'tasks.json');
   // ensure folder
-  try { await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(ws.uri, '.vscode')); } catch {}
+  try {
+    await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(ws.uri, '.vscode'));
+  } catch {}
 
   // build tasks
-  const shortcuts = [...getConfigShortcuts()].filter(s => platformOk(s) && whenOk(s) && profileOk(s));
-  const tasks = shortcuts.map(s => shortcutToTask(s));
-  let final = { version: '2.0.0', tasks: [] as any[] };
+  type TaskConfig = { label: string; type: string; command: string; args: string[]; options: { cwd: string }; problemMatcher: string[] };
+  type TasksJson = { version: string; tasks: TaskConfig[] };
+  
+  const shortcuts = [...getConfigShortcuts()].filter((s) => platformOk(s) && whenOk(s) && profileOk(s));
+  const tasks = shortcuts.map((s) => shortcutToTask(s));
+  let final: TasksJson = { version: '2.0.0', tasks: [] };
   try {
     const raw = await vscode.workspace.fs.readFile(tasksUri);
-    final = JSON.parse(Buffer.from(raw).toString('utf8'));
+    final = JSON.parse(Buffer.from(raw).toString('utf8')) as TasksJson;
     if (!final.tasks) final.tasks = [];
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   // merge: replace existing launcher:* tasks
-  final.tasks = (final.tasks || []).filter((t:any) => !(typeof t.label === 'string' && t.label.startsWith('launcher:')));
+  final.tasks = (final.tasks || []).filter(
+    (t) => !(typeof t.label === 'string' && t.label.startsWith('launcher:'))
+  );
   final.tasks.push(...tasks);
   await vscode.workspace.fs.writeFile(tasksUri, Buffer.from(JSON.stringify(final, null, 2), 'utf8'));
   vscode.window.showInformationMessage('tasks.json generated/updated from shortcuts.');
@@ -304,21 +351,21 @@ async function generateTasksFromShortcuts() {
 function shortcutToTask(s: Shortcut) {
   // Build shell command approximating the spawn
   const ctx = pickContext();
-  const cwd = s.cwd ? resolveVars(s.cwd, ctx) : ctx.workspaceFolder || require('os').homedir();
-  const args = (s.args || []).map(a => resolveVars(a, ctx));
+  const cwd = s.cwd ? resolveVars(s.cwd, ctx) : ctx.workspaceFolder || os.homedir();
+  const args = (s.args || []).map((a) => resolveVars(a, ctx));
   let command = '';
   let shellArgs: string[] = [];
   if (!s.program || s.program.trim() === '') {
     if (process.platform === 'win32') {
-  command = 'cmd';
-  shellArgs = ['/c', 'start', '""'].concat(args.length ? args : [cwd]);
+      command = 'cmd';
+      shellArgs = ['/c', 'start', '""'].concat(args.length ? args : [cwd]);
       // join for display only; tasks will handle args array
     } else if (process.platform === 'darwin') {
       command = 'open';
-      shellArgs = args.length? args:[cwd];
+      shellArgs = args.length ? args : [cwd];
     } else {
       command = 'xdg-open';
-      shellArgs = args.length? args:[cwd];
+      shellArgs = args.length ? args : [cwd];
     }
   } else {
     command = resolveVars(s.program, ctx);
@@ -330,7 +377,7 @@ function shortcutToTask(s: Shortcut) {
     command,
     args: shellArgs,
     options: { cwd },
-    problemMatcher: []
+    problemMatcher: [],
   };
 }
 
@@ -338,8 +385,10 @@ function shortcutToTask(s: Shortcut) {
 async function exportShortcutsWorkspace() {
   const cfg = vscode.workspace.getConfiguration();
   const shortcuts = cfg.get<Shortcut[]>('launcher.shortcuts', []);
-  const wsCfgTarget = vscode.ConfigurationTarget.Workspace;
-  const uri = await vscode.window.showSaveDialog({ filters: { 'JSON': ['json'] }, saveLabel: 'Export Shortcuts (Workspace)' });
+  const uri = await vscode.window.showSaveDialog({
+    filters: { JSON: ['json'] },
+    saveLabel: 'Export Shortcuts (Workspace)',
+  });
   if (!uri) return;
   await vscode.workspace.fs.writeFile(uri, Buffer.from(JSON.stringify(shortcuts, null, 2), 'utf8'));
   vscode.window.showInformationMessage('Workspace shortcuts exported.');
@@ -347,7 +396,11 @@ async function exportShortcutsWorkspace() {
 
 async function importShortcutsWorkspace() {
   const cfg = vscode.workspace.getConfiguration();
-  const pick = await vscode.window.showOpenDialog({ canSelectMany: false, filters: { 'JSON': ['json'] }, openLabel: 'Import Shortcuts (Workspace)' });
+  const pick = await vscode.window.showOpenDialog({
+    canSelectMany: false,
+    filters: { JSON: ['json'] },
+    openLabel: 'Import Shortcuts (Workspace)',
+  });
   if (!pick || !pick[0]) return;
   const data = await vscode.workspace.fs.readFile(pick[0]);
   try {
@@ -358,8 +411,9 @@ async function importShortcutsWorkspace() {
     } else {
       vscode.window.showErrorMessage('Invalid JSON format.');
     }
-  } catch (e:any) {
-    vscode.window.showErrorMessage('Import failed: ' + (e?.message ?? String(e)));
+  } catch (e) {
+    const error = e as Error;
+    vscode.window.showErrorMessage('Import failed: ' + (error?.message ?? String(e)));
   }
 }
 
@@ -373,67 +427,84 @@ function autoDiscoveredShells(): Shortcut[] {
     ];
     // find PowerShell Core (pwsh.exe) under Program Files\\PowerShell\\*\\pwsh.exe
     const pf = process.env['ProgramFiles'] || 'C:\\\\Program Files';
-    const pwshGlob = require('path').join(pf, 'PowerShell');
+    const pwshGlob = path.join(pf, 'PowerShell');
     try {
-      const versions = require('fs').readdirSync(pwshGlob, { withFileTypes: true })
-        .filter((d:any) => d.isDirectory())
-        .map((d:any) => require('path').join(pwshGlob, d.name, 'pwsh.exe'));
+      const versions = fs
+        .readdirSync(pwshGlob, { withFileTypes: true })
+        .filter((d) => d.isDirectory())
+        .map((d) => path.join(pwshGlob, d.name, 'pwsh.exe'));
       for (const p of versions) {
-        if (require('fs').existsSync(p)) {
-          candidates.push({ label: 'PowerShell (pwsh)', program: p, args: [] } as any);
+        if (fs.existsSync(p)) {
+          candidates.push({ label: 'PowerShell (pwsh)', program: p, args: [] });
           break;
         }
       }
     } catch {}
     for (const c of candidates) {
-      try { if (fs.existsSync(c.program)) list.push({ id: `auto-${c.label.replace(/\\s+/g,'-').toLowerCase()}`, label: c.label, program: c.program, args: c.args }); } catch {}
+      try {
+        if (fs.existsSync(c.program))
+          list.push({
+            id: `auto-${c.label.replace(/\\s+/g, '-').toLowerCase()}`,
+            label: c.label,
+            program: c.program,
+            args: c.args,
+          });
+      } catch {}
     }
   }
   return list;
 }
 
-
-
 // --- VS Code family autodiscovery (Windows) ---
 function autoDiscoveredEditors(): Shortcut[] {
   const list: Shortcut[] = [];
   if (process.platform === 'win32') {
-    const local = process.env['LOCALAPPDATA'] || (require('os').homedir() + '\\\\AppData\\\\Local');
+    const local = process.env['LOCALAPPDATA'] || os.homedir() + '\\\\AppData\\\\Local';
     const candidates = [
       { label: 'VS Code', program: 'C:\\\\Program Files\\\\Microsoft VS Code\\\\Code.exe' },
-      { label: 'VS Code Insiders', program: 'C:\\\\Program Files\\\\Microsoft VS Code Insiders\\\\Code - Insiders.exe' },
-      { label: 'Cursor', program: (local + '\\\\Programs\\\\cursor\\\\Cursor.exe') },
-      { label: 'Windsurf', program: (local + '\\\\Programs\\\\Windsurf\\\\Windsurf.exe') }
+      {
+        label: 'VS Code Insiders',
+        program: 'C:\\\\Program Files\\\\Microsoft VS Code Insiders\\\\Code - Insiders.exe',
+      },
+      { label: 'Cursor', program: local + '\\\\Programs\\\\cursor\\\\Cursor.exe' },
+      { label: 'Windsurf', program: local + '\\\\Programs\\\\Windsurf\\\\Windsurf.exe' },
     ];
     for (const c of candidates) {
-      try { if (fs.existsSync(c.program)) list.push({ id: `auto-${c.label.replace(/\\s+/g,'-').toLowerCase()}`, label: c.label, program: c.program }); } catch {}
+      try {
+        if (fs.existsSync(c.program))
+          list.push({ id: `auto-${c.label.replace(/\\s+/g, '-').toLowerCase()}`, label: c.label, program: c.program });
+      } catch {}
     }
   }
   return list;
 }
 
 // --- Run nested sequence groups ---
-function isGroupStep(step: any): boolean {
-  return typeof step === 'object' && Array.isArray(step.sequence);
+function isGroupStep(step: SequenceStep): boolean {
+  return typeof step === 'object' && 'sequence' in step && Array.isArray(step.sequence);
 }
-
 
 class ShortcutEditorPanel {
   public static current: ShortcutEditorPanel | undefined;
   public static readonly viewType = 'launcher.shortcutEditor';
 
-  private constructor(private readonly panel: vscode.WebviewPanel, private readonly context: vscode.ExtensionContext) {
+  private constructor(private readonly panel: vscode.WebviewPanel) {
     this.update();
-    panel.onDidDispose(() => { ShortcutEditorPanel.current = undefined; });
-    this.panel.webview.onDidReceiveMessage(async (msg) => {
+    panel.onDidDispose(() => {
+      ShortcutEditorPanel.current = undefined;
+    });
+    this.panel.webview.onDidReceiveMessage(async (msg: { type: string; text?: string }) => {
       if (msg.type === 'save') {
         try {
-          const arr = JSON.parse(msg.text);
+          const arr = JSON.parse(msg.text || '[]');
           if (!Array.isArray(arr)) throw new Error('JSON must be an array');
-          await vscode.workspace.getConfiguration().update('launcher.shortcuts', arr, vscode.ConfigurationTarget.Global);
+          await vscode.workspace
+            .getConfiguration()
+            .update('launcher.shortcuts', arr, vscode.ConfigurationTarget.Global);
           vscode.window.showInformationMessage('Shortcuts saved to User settings.');
-        } catch (e:any) {
-          vscode.window.showErrorMessage('Save failed: ' + (e?.message ?? String(e)));
+        } catch (e) {
+          const error = e as Error;
+          vscode.window.showErrorMessage('Save failed: ' + (error?.message ?? String(e)));
         }
       } else if (msg.type === 'close') {
         this.panel.dispose();
@@ -441,22 +512,23 @@ class ShortcutEditorPanel {
     });
   }
 
-  public static show(context: vscode.ExtensionContext) {
+  public static show() {
     if (ShortcutEditorPanel.current) {
       ShortcutEditorPanel.current.panel.reveal();
       return;
     }
     const panel = vscode.window.createWebviewPanel(this.viewType, 'Shortcut Editor', vscode.ViewColumn.Active, {
-      enableScripts: true
+      enableScripts: true,
     });
-    ShortcutEditorPanel.current = new ShortcutEditorPanel(panel, context);
+    ShortcutEditorPanel.current = new ShortcutEditorPanel(panel);
   }
 
   private update() {
     const cfg = vscode.workspace.getConfiguration();
-    const current = cfg.get('launcher.shortcuts', [] as any[]);
-    
-const html = `<!doctype html>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const current = cfg.get('launcher.shortcuts', [] as Shortcut[]);
+
+    const html = `<!doctype html>
 <html>
 <head>
 <meta charset="utf-8" />
@@ -578,7 +650,6 @@ const html = `<!doctype html>
   }
 }
 
-
 function detectVariant(): string {
   const env = process.env;
   try {
@@ -590,17 +661,6 @@ function detectVariant(): string {
     if (env.VSCODE_PORTABLE) return 'VSCode Portable';
   } catch {}
   return 'VS Code';
-}
-
-function variantAccent(): string | undefined {
-  const v = detectVariant();
-  switch (v) {
-    case 'Cursor': return '#8A85FF';
-    case 'Windsurf': return '#2EC6F8';
-    case 'Qoder': return '#FFD166';
-    case 'Trae': return '#FF6B6B';
-    default: return undefined;
-  }
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -617,11 +677,17 @@ export function activate(context: vscode.ExtensionContext) {
     } else if (typeof id === 'string') {
       // search in configured and auto-discovered lists
       const all = [...shortcuts, ...autoDiscoveredShortcuts(), ...autoDiscoveredShells(), ...autoDiscoveredEditors()];
-      target = all.find(s => s.id === id);
+      target = all.find((s) => s.id === id);
     } else {
       // If called without id, show quick pick
-      const pick = await quickPick([...shortcuts, ...autoDiscoveredShortcuts(), ...autoDiscoveredShells(), ...autoDiscoveredEditors()].filter(s => platformOk(s) && whenOk(s) && profileOk(s)));
-      if (!pick) { return; }
+      const pick = await quickPick(
+        [...shortcuts, ...autoDiscoveredShortcuts(), ...autoDiscoveredShells(), ...autoDiscoveredEditors()].filter(
+          (s) => platformOk(s) && whenOk(s) && profileOk(s)
+        )
+      );
+      if (!pick) {
+        return;
+      }
       target = pick;
     }
     if (!target) {
@@ -637,7 +703,14 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   const qpCmd = vscode.commands.registerCommand('launcher.openQuickPick', async () => {
-    const s = await quickPick([...getConfigShortcuts(), ...autoDiscoveredShortcuts(), ...autoDiscoveredShells(), ...autoDiscoveredEditors()].filter(s => platformOk(s) && whenOk(s) && profileOk(s)));
+    const s = await quickPick(
+      [
+        ...getConfigShortcuts(),
+        ...autoDiscoveredShortcuts(),
+        ...autoDiscoveredShells(),
+        ...autoDiscoveredEditors(),
+      ].filter((s) => platformOk(s) && whenOk(s) && profileOk(s))
+    );
     if (s) {
       runShortcut(s);
       pushRecent(context, s);
@@ -649,14 +722,16 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   const exportCmd = vscode.commands.registerCommand('launcher.exportShortcuts', exportShortcuts);
-  const openEditorCmd = vscode.commands.registerCommand('launcher.openEditor', () => ShortcutEditorPanel.show(context));
+  const openEditorCmd = vscode.commands.registerCommand('launcher.openEditor', () => ShortcutEditorPanel.show());
   const importCmd = vscode.commands.registerCommand('launcher.importShortcuts', importShortcuts);
   const rescanCmd = vscode.commands.registerCommand('launcher.rescanAutoDiscover', () => provider.refresh());
   const genTasksCmd = vscode.commands.registerCommand('launcher.generateTasks', generateTasksFromShortcuts);
   const setProfileCmd = vscode.commands.registerCommand('launcher.setActiveProfile', async () => {
     const val = await vscode.window.showInputBox({ placeHolder: 'Active profile name (empty = all)' });
     if (val !== undefined) {
-      await vscode.workspace.getConfiguration().update('launcher.activeProfile', val, vscode.ConfigurationTarget.Global);
+      await vscode.workspace
+        .getConfiguration()
+        .update('launcher.activeProfile', val, vscode.ConfigurationTarget.Global);
       provider.refresh();
     }
   });
@@ -671,28 +746,44 @@ export function activate(context: vscode.ExtensionContext) {
   sb.tooltip = `Variant: ${detectVariant()}`;
   sb.command = 'launcher.openQuickPick';
   sb.show();
-  context.subscriptions.push(runCmd, qpCmd, openSettingsCmd, exportCmd, importCmd, rescanCmd, genTasksCmd, setProfileCmd, exportWS, importWS, openEditorCmd, aboutCmd, sb);
+  context.subscriptions.push(
+    runCmd,
+    qpCmd,
+    openSettingsCmd,
+    exportCmd,
+    importCmd,
+    rescanCmd,
+    genTasksCmd,
+    setProfileCmd,
+    exportWS,
+    importWS,
+    openEditorCmd,
+    aboutCmd,
+    sb
+  );
 
   // Refresh view when settings change
-  context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
-    if (e.affectsConfiguration('launcher')) provider.refresh();
-  }));
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((e: vscode.ConfigurationChangeEvent) => {
+      if (e.affectsConfiguration('launcher')) provider.refresh();
+    })
+  );
 }
 
 function pushRecent(context: vscode.ExtensionContext, s: Shortcut) {
   const limit = vscode.workspace.getConfiguration().get<number>('launcher.recentLimit', 10);
   const key = 'launcher.recent';
   const prev = context.globalState.get<Shortcut[]>(key, []);
-  const list = [s, ...prev.filter(x => x.id != s.id)];
+  const list = [s, ...prev.filter((x: Shortcut) => x.id != s.id)];
   context.globalState.update(key, list.slice(0, limit));
 }
 
 async function quickPick(shortcuts: Shortcut[]): Promise<Shortcut | undefined> {
-  const items = shortcuts.map(s => ({
+  const items = shortcuts.map((s) => ({
     label: s.label || s.id,
     description: s.program || '(default app)',
-    detail: (s.args && s.args.length) ? s.args.join(' ') : '',
-    s
+    detail: s.args && s.args.length ? s.args.join(' ') : '',
+    s,
   }));
   const picked = await vscode.window.showQuickPick(items, { placeHolder: 'Pilih shortcut untuk dijalankan' });
   return picked?.s;
