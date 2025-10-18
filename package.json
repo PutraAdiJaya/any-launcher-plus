@@ -1,0 +1,196 @@
+{
+  "name": "any-launcher-plus",
+  "displayName": "Launcher Plus (Shortcuts)",
+  "description": "Shortcut list to launch apps, scripts, or open docs from VS Code / Cursor / Windsurf. Tree view, QuickPick, variables, recent items.",
+  "publisher": "PutraAdiJaya",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "icon": "media/icon.png",
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:launcher.openQuickPick",
+    "onCommand:launcher.run",
+    "onView:launcher.shortcutsView"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "launcher.openQuickPick",
+        "title": "Launcher: Open Shortcuts"
+      },
+      {
+        "command": "launcher.run",
+        "title": "Launcher: Run Shortcut by ID",
+        "category": "Launcher",
+        "enablement": "true"
+      },
+      {
+        "command": "launcher.openSettings",
+        "title": "Launcher: Open Settings"
+      },
+      {
+        "command": "launcher.exportShortcuts",
+        "title": "Launcher: Export Shortcuts (JSON)"
+      },
+      {
+        "command": "launcher.importShortcuts",
+        "title": "Launcher: Import Shortcuts (JSON)"
+      },
+      {
+        "command": "launcher.rescanAutoDiscover",
+        "title": "Launcher: Rescan Auto-Discovered Apps"
+      },
+      {
+        "command": "launcher.generateTasks",
+        "title": "Launcher: Generate tasks.json from Shortcuts"
+      },
+      {
+        "command": "launcher.setActiveProfile",
+        "title": "Launcher: Set Active Profile"
+      },
+      {
+        "command": "launcher.exportShortcutsWorkspace",
+        "title": "Launcher: Export Shortcuts to Workspace (JSON)"
+      },
+      {
+        "command": "launcher.importShortcutsWorkspace",
+        "title": "Launcher: Import Shortcuts into Workspace (JSON)"
+      },
+      {
+        "command": "launcher.openEditor",
+        "title": "Launcher: Open Shortcut Editor"
+      }
+    ],
+    "configuration": {
+      "title": "Launcher Plus",
+      "properties": {
+        "launcher.shortcuts": {
+          "type": "array",
+          "default": [
+            {
+              "id": "open-doc-default",
+              "label": "Open in Default App",
+              "program": "",
+              "args": [
+                "${file}"
+              ],
+              "cwd": "${workspaceFolder}",
+              "env": {},
+              "runAsAdmin": false,
+              "when": "",
+              "platform": "win"
+            }
+          ],
+          "markdownDescription": "List of shortcuts. Keys: id, label, program (empty uses OS default handler), args, cwd, env, runAsAdmin (Windows), when (VS Code when-clause-like condition), platform (win/mac/linux). Variables: ${file}, ${workspaceFolder}, ${relativeFile}, ${lineNumber}, ${selectedText}.\nNew fields: `icon` (codicon or absolute file path), `sequence` (array of inline steps or shortcut IDs) for multi-target execution.\nYou can set `profile` on a shortcut and control visibility with `launcher.activeProfile`. Also `sequenceMode`: `serial|parallel`."
+        },
+        "launcher.recentLimit": {
+          "type": "number",
+          "default": 10,
+          "markdownDescription": "How many recent items to keep in memory."
+        },
+        "launcher.showInExplorer": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show Shortcuts tree view in Explorer sidebar."
+        },
+        "launcher.enableAutoDiscover": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Automatically discover common apps (Chrome/Office/Notepad/etc.) and add virtual shortcuts (not saved into settings)."
+        },
+        "launcher.autoDiscoverPlatforms": {
+          "type": "array",
+          "default": [
+            "win",
+            "mac",
+            "linux"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "markdownDescription": "Which platforms should attempt auto-discovery."
+        },
+        "launcher.activeProfile": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Active profile name. If a shortcut has `profile`, it will only show when this matches (or when profile is empty)."
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "launcher.shortcutsView",
+          "name": "Shortcuts",
+          "when": "config.launcher.showInExplorer"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "launcher.openSettings",
+          "when": "view == launcher.shortcutsView",
+          "group": "navigation"
+        },
+        {
+          "command": "launcher.openQuickPick",
+          "when": "view == launcher.shortcutsView",
+          "group": "navigation"
+        },
+        {
+          "command": "launcher.openEditor",
+          "when": "view == launcher.shortcutsView",
+          "group": "navigation@2"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "launcher.openQuickPick",
+          "group": "navigation@9"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "launcher.openQuickPick",
+          "group": "navigation@9"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "launcher.openQuickPick",
+        "key": "ctrl+alt+L",
+        "mac": "cmd+alt+L",
+        "when": "editorTextFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "publish:ovsx": "ovsx publish -p $OVSX_TOKEN",
+    "publish:vsce": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/vscode": "^1.84.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
+    "eslint": "^9.38.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "ovsx": "^0.9.2",
+    "prettier": "^3.6.2",
+    "typescript": "^5.5.4",
+    "vsce": "^2.15.0"
+  }
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "open-default",
+    "label": "Open in Default App",
+    "program": "",
+    "args": [
+      "${file}"
+    ],
+    "platform": "win"
+  },
+  {
+    "id": "downloads-folder",
+    "label": "Open Downloads Folder",
+    "program": "explorer.exe",
+    "args": [
+      "C:\\\\Users\\\\%USERNAME%\\\\Downloads"
+    ],
+    "platform": "win"
+  },
+  {
+    "id": "open-chrome-url",
+    "label": "Chrome: Open current file path as URL",
+    "program": "C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe",
+    "args": [
+      "${file}"
+    ],
+    "platform": "win",
+    "icon": "globe"
+  }
+]

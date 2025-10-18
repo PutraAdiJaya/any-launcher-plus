@@ -1,0 +1,42 @@
+[
+  {
+    "id": "ops-start",
+    "label": "Ops Start",
+    "profile": "ops",
+    "sequenceMode": "parallel",
+    "sequence": [
+      {
+        "program": "C:\\\\Windows\\\\System32\\\\wsl.exe"
+      },
+      {
+        "program": "C:\\\\Program Files\\\\PowerShell\\\\7\\\\pwsh.exe"
+      }
+    ],
+    "icon": "rocket"
+  },
+  {
+    "id": "dev-start",
+    "label": "Dev Start",
+    "profile": "dev",
+    "sequence": [
+      {
+        "sequenceMode": "parallel",
+        "sequence": [
+          {
+            "program": "C:\\\\Program Files\\\\Microsoft VS Code\\\\Code.exe"
+          },
+          {
+            "program": "C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe"
+          }
+        ]
+      },
+      {
+        "program": "C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe",
+        "args": [
+          "http://localhost:3000"
+        ]
+      }
+    ],
+    "icon": "tools"
+  }
+]

@@ -1,0 +1,36 @@
+[
+  {
+    "id": "morning-setup",
+    "label": "Morning Setup",
+    "sequenceMode": "serial",
+    "sequence": [
+      {
+        "sequenceMode": "parallel",
+        "sequence": [
+          {
+            "program": "C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe",
+            "args": [
+              "https://calendar.google.com"
+            ]
+          },
+          {
+            "program": "C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe",
+            "args": [
+              "https://mail.google.com"
+            ]
+          }
+        ]
+      },
+      {
+        "program": "C:\\\\Windows\\\\System32\\\\wsl.exe"
+      },
+      {
+        "program": "C:\\\\Windows\\\\System32\\\\notepad.exe",
+        "args": [
+          "C:\\\\temp\\\\notes.txt"
+        ]
+      }
+    ],
+    "icon": "clock"
+  }
+]

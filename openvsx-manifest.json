@@ -1,0 +1,11 @@
+{
+  "$schema": "https://open-vsx.org/schema/openvsx-publish.json",
+  "ignore": [
+    ".github",
+    "examples",
+    "scripts",
+    "media/*.psd",
+    "tests"
+  ],
+  "dependencies": []
+}
