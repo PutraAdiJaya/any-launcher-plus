@@ -131,7 +131,7 @@ function loadEditorSpecificShortcuts(): Shortcut[] {
     const folderName = '.vscode';
     const workspacePath = path.join(ws.uri.fsPath, folderName, fileName);
     console.log(`[Launcher] Looking for workspace shortcuts at: ${workspacePath}`);
-    
+
     if (fs.existsSync(workspacePath)) {
       const content = fs.readFileSync(workspacePath, 'utf8');
       const parsed = JSON.parse(content);
@@ -154,7 +154,7 @@ function loadEditorSpecificShortcuts(): Shortcut[] {
 function getGlobalShortcutsPath(): string {
   // Get VS Code User directory based on platform
   const fileName = 'launcher-putra.json';
-  
+
   if (process.platform === 'win32') {
     // Windows: %APPDATA%\Code\User\launcher-putra.json
     const appData = process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming');
@@ -209,7 +209,7 @@ async function verifyProgramExists(program: string): Promise<boolean> {
         exists = true; // Optimistic approach - let spawn handle the error
       }
     }
-  } catch (error) {
+  } catch {
     // If verification fails, assume program exists and let spawn handle it
     exists = true;
   }
@@ -506,7 +506,7 @@ async function runShortcut(s: Shortcut): Promise<void> {
         args = elevatedArgs;
 
         vscode.window.showInformationMessage(`🔐 Meminta izin administrator untuk ${s.label}...`);
-      } catch (elevationError) {
+      } catch {
         vscode.window.showWarningMessage(`⚠️ Gagal meminta izin administrator. Mencoba menjalankan tanpa elevasi...`);
         // Continue with original program and args
       }
@@ -908,7 +908,7 @@ class ShortcutsProvider implements vscode.TreeDataProvider<ShortcutItem> {
 
     // Combine all shortcuts
     const allShortcuts = [...configShortcuts, ...shortcuts, ...shells, ...editors];
-    
+
     // Deduplicate by ID (configShortcuts take priority over auto-discovered)
     const uniqueShortcuts = new Map<string, Shortcut>();
     for (const shortcut of allShortcuts) {
@@ -1142,7 +1142,7 @@ function autoDiscoveredShortcuts(): Shortcut[] {
   // Add common development build commands (cross-platform)
   const ctx = pickContext();
   const workspaceFolder = ctx.workspaceFolder;
-  
+
   if (workspaceFolder) {
     // Node.js / JavaScript projects
     if (fs.existsSync(path.join(workspaceFolder, 'package.json'))) {
@@ -1224,9 +1224,11 @@ function autoDiscoveredShortcuts(): Shortcut[] {
     }
 
     // Python projects
-    if (fs.existsSync(path.join(workspaceFolder, 'requirements.txt')) || 
-        fs.existsSync(path.join(workspaceFolder, 'setup.py')) ||
-        fs.existsSync(path.join(workspaceFolder, 'pyproject.toml'))) {
+    if (
+      fs.existsSync(path.join(workspaceFolder, 'requirements.txt')) ||
+      fs.existsSync(path.join(workspaceFolder, 'setup.py')) ||
+      fs.existsSync(path.join(workspaceFolder, 'pyproject.toml'))
+    ) {
       list.push({
         id: 'auto-python-run',
         label: '🐍 python main.py',
@@ -1268,8 +1270,10 @@ function autoDiscoveredShortcuts(): Shortcut[] {
     }
 
     // Gradle projects
-    if (fs.existsSync(path.join(workspaceFolder, 'build.gradle')) ||
-        fs.existsSync(path.join(workspaceFolder, 'build.gradle.kts'))) {
+    if (
+      fs.existsSync(path.join(workspaceFolder, 'build.gradle')) ||
+      fs.existsSync(path.join(workspaceFolder, 'build.gradle.kts'))
+    ) {
       const gradleCmd = plat === 'win32' ? 'gradlew.bat' : './gradlew';
       list.push({
         id: 'auto-gradle-build',
@@ -1290,8 +1294,7 @@ function autoDiscoveredShortcuts(): Shortcut[] {
     }
 
     // .NET projects
-    if (fs.existsSync(path.join(workspaceFolder, '*.csproj')) ||
-        fs.existsSync(path.join(workspaceFolder, '*.sln'))) {
+    if (fs.existsSync(path.join(workspaceFolder, '*.csproj')) || fs.existsSync(path.join(workspaceFolder, '*.sln'))) {
       list.push({
         id: 'auto-dotnet-run',
         label: '⚡ dotnet run',
@@ -1319,8 +1322,10 @@ function autoDiscoveredShortcuts(): Shortcut[] {
     }
 
     // Docker projects
-    if (fs.existsSync(path.join(workspaceFolder, 'Dockerfile')) ||
-        fs.existsSync(path.join(workspaceFolder, 'docker-compose.yml'))) {
+    if (
+      fs.existsSync(path.join(workspaceFolder, 'Dockerfile')) ||
+      fs.existsSync(path.join(workspaceFolder, 'docker-compose.yml'))
+    ) {
       list.push({
         id: 'auto-docker-compose-up',
         label: '🐳 docker-compose up',
@@ -1340,8 +1345,10 @@ function autoDiscoveredShortcuts(): Shortcut[] {
     }
 
     // Makefile projects
-    if (fs.existsSync(path.join(workspaceFolder, 'Makefile')) ||
-        fs.existsSync(path.join(workspaceFolder, 'makefile'))) {
+    if (
+      fs.existsSync(path.join(workspaceFolder, 'Makefile')) ||
+      fs.existsSync(path.join(workspaceFolder, 'makefile'))
+    ) {
       list.push({
         id: 'auto-make',
         label: '🔧 make',
@@ -2254,50 +2261,48 @@ function getDefaultShortcuts(): Shortcut[] {
 
 async function initializeGlobalShortcuts(context: vscode.ExtensionContext) {
   const globalPath = getGlobalShortcutsPath();
-  
+
   // ALWAYS check if file exists - recreate if deleted
   const fileExists = fs.existsSync(globalPath);
-  
+
   if (!fileExists) {
     console.log('[Launcher] 📁 Global shortcuts file not found, creating from template...');
     output.appendLine('[Launcher] Creating/restoring global shortcuts file...');
-    
+
     try {
       // Ensure directory exists
       const dir = path.dirname(globalPath);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
-      
+
       // Read default shortcuts template from extension
       const extensionPath = context.extensionPath;
       const templatePath = path.join(extensionPath, '.vscode', 'launcher-putra.json');
-      
+
       if (fs.existsSync(templatePath)) {
         // Copy template to global location
         const templateContent = fs.readFileSync(templatePath, 'utf8');
         fs.writeFileSync(globalPath, templateContent, 'utf8');
-        
+
         console.log(`[Launcher] ✅ Created/restored global shortcuts at: ${globalPath}`);
         output.appendLine(`[Launcher] ✅ Global shortcuts file created at: ${globalPath}`);
-        
+
         // Show notification to user (only on first creation, not restoration)
         const firstRunKey = 'launcher.globalShortcutsInitialized';
         const alreadyInitialized = context.globalState.get<boolean>(firstRunKey, false);
-        
+
         if (!alreadyInitialized) {
-          vscode.window.showInformationMessage(
-            `🎉 Launcher Plus: Default shortcuts created at ${globalPath}`,
-            'Open File',
-            'OK'
-          ).then(selection => {
-            if (selection === 'Open File') {
-              vscode.workspace.openTextDocument(globalPath).then(doc => {
-                vscode.window.showTextDocument(doc);
-              });
-            }
-          });
-          
+          vscode.window
+            .showInformationMessage(`🎉 Launcher Plus: Default shortcuts created at ${globalPath}`, 'Open File', 'OK')
+            .then((selection) => {
+              if (selection === 'Open File') {
+                vscode.workspace.openTextDocument(globalPath).then((doc) => {
+                  vscode.window.showTextDocument(doc);
+                });
+              }
+            });
+
           // Mark as initialized (for first-time notification only)
           await context.globalState.update(firstRunKey, true);
         } else {
@@ -2810,30 +2815,30 @@ export function activate(context: vscode.ExtensionContext) {
           label: '🌍 Global Shortcuts',
           description: 'Available in all workspaces',
           detail: getGlobalShortcutsPath(),
-          value: 'global'
+          value: 'global',
         },
         {
           label: '📁 Workspace Shortcuts',
           description: 'Only for current workspace',
           detail: getEditorSettingsPath() || 'No workspace folder',
-          value: 'workspace'
-        }
+          value: 'workspace',
+        },
       ],
       {
         placeHolder: 'Choose shortcuts file to open',
         matchOnDescription: true,
-        matchOnDetail: true
+        matchOnDetail: true,
       }
     );
 
     if (!choice) return;
 
     let settingsPath: string;
-    
+
     if (choice.value === 'global') {
       // Open global shortcuts file
       settingsPath = getGlobalShortcutsPath();
-      
+
       // Create directory if it doesn't exist
       const dir = path.dirname(settingsPath);
       if (!fs.existsSync(dir)) {
@@ -2933,8 +2938,6 @@ export function activate(context: vscode.ExtensionContext) {
     const message = `🔍 Ditemukan ${invalidShortcuts.length} shortcut tidak valid dari ${allShortcuts.length} total.\n\nShortcut valid: ${validShortcuts.length}`;
 
     if (invalidShortcuts.length > 0) {
-      const invalidList = invalidShortcuts.map((s) => `- ${s.label} (${s.program})`).join('\n');
-
       const action = await vscode.window.showWarningMessage(
         message,
         { modal: true },
