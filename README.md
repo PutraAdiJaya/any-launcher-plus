@@ -71,10 +71,13 @@ Launch applications, run scripts, and open documents directly from your editor w
 
 ### Quick Setup
 
-1. **Open Settings File**: Use `Ctrl+Shift+P` → `Launcher: Open Settings File`
-2. **Auto-Creation**: File is created automatically with default shortcuts
-3. **Edit & Save**: Modify shortcuts and save the file
-4. **Reload**: Use the 🔄 reload button in the Shortcuts panel
+1. **Open Settings File**: Click the `{}` icon in Launcher Plus panel or use `Ctrl+Shift+P` → `Launcher Plus: Open Settings File`
+2. **Choose Scope**: 
+   - **🌍 Global Shortcuts** - Available in ALL workspaces (recommended)
+   - **📁 Workspace Shortcuts** - Only for current project
+3. **Auto-Creation**: File is created automatically with 90+ default shortcuts on first open
+4. **Edit & Save**: Modify shortcuts and save the file
+5. **Reload**: Use the 🔄 reload button in Shortcuts panel or reload window
 
 ### Manual Setup
 
@@ -104,26 +107,71 @@ Add shortcuts to your settings (JSON):
 
 ### Default Shortcuts
 
-The extension automatically creates default shortcuts in editor-specific folders:
+The extension automatically creates default shortcuts on first install with 90+ pre-configured commands!
 
 **File Locations:**
 
+**Global (Recommended):**
+- Windows: `%APPDATA%\Code\User\launcher-putra.json`
+- macOS: `~/Library/Application Support/Code/User/launcher-putra.json`
+- Linux: `~/.config/Code/User/launcher-putra.json`
+
+**Workspace-Specific (Optional):**
 - VS Code: `.vscode/launcher-putra.json`
 - Cursor: `.cursor/launcher-putra.json`
 - Windsurf: `.windsurf/launcher-putra.json`
 - Kiro: `.kiro/launcher-putra.json`
 
-**Developer-Focused Shortcuts (Windows):**
+**🎯 Loading Priority:**
+1. Global shortcuts loaded first (available everywhere)
+2. Workspace shortcuts loaded after (can override global by ID)
+3. Automatic deduplication prevents duplicates
 
-- 💻 **Terminals**: Command Prompt, PowerShell, WSL, Git Bash
-- 📦 **Package Managers**: npm install/start/test, yarn install
-- 🔧 **Development Tools**: Node.js REPL, Python REPL, Docker Desktop
-- 🌐 **Web Development**: Chrome Dev Mode, localhost shortcuts (3000, 8080)
-- 📁 **File Management**: Explorer (Current Folder)
-- 🔍 **Git Operations**: Git Status, Git Log (Graph)
-- 🚀 **API Testing**: Postman integration
-- 🔌 **Network Tools**: Port checker, localhost openers
-- 📊 **System Monitoring**: Task Manager
+**Developer-Focused Shortcuts (90+ Commands):**
+
+**💻 Terminals & Shells:**
+- Command Prompt, PowerShell, WSL, Git Bash
+- Ubuntu/Debian/Kali Linux (WSL distributions)
+- PowerShell Core (pwsh), Windows Terminal
+
+**⚡ Build Commands (All Platforms):**
+- **Node.js**: npm run serve/dev/start/build/test/lint
+- **Go**: go run main.go, go build, go test
+- **Rust**: cargo run/build/test
+- **Python**: python main.py, Django runserver
+- **Java**: mvn clean install, mvn test
+- **Gradle**: gradle build/test (gradlew)
+- **.NET**: dotnet run/build/test
+- **Docker**: docker-compose up/down
+- **Make**: make, make clean
+
+**🔐 SSH & Remote Access:**
+- SSH to localhost (multiple ports)
+- SSH with custom user
+- SSH key generation (RSA 4096)
+- SSH copy ID (authorized_keys)
+- SCP file upload/download
+- SSH config testing
+
+**📦 Package Managers:**
+- npm install/start/test, yarn install
+- Automatic detection from package.json scripts
+
+**🔧 Development Tools:**
+- Node.js REPL, Python REPL, Docker Desktop
+- Git Status, Git Log (Graph)
+- Postman, Chrome Dev Mode
+
+**🌐 Web Development:**
+- localhost shortcuts (3000, 8080)
+- Port checker utilities
+- Browser launchers with dev tools
+
+**📁 File & System:**
+- Explorer shortcuts (Downloads, Documents, Desktop)
+- Task Manager, Control Panel
+- Registry Editor, Device Manager
+- Services, Event Viewer
 
 **Auto-Discovery:**
 The extension automatically detects and adds shortcuts for installed applications:
@@ -222,6 +270,32 @@ The extension automatically detects and adds shortcuts for installed application
 
 Set active profile: `"launcher.activeProfile": "ops"`
 
+### SSH Connection
+
+```json
+{
+  "id": "ssh-server",
+  "label": "🔐 SSH to Production Server",
+  "program": "cmd.exe",
+  "args": ["/c", "ssh", "user@server.com", "-p", "22"],
+  "icon": "lock",
+  "platform": "win"
+}
+```
+
+### Build Command with Variables
+
+```json
+{
+  "id": "go-run-current",
+  "label": "⚡ go run ${file}",
+  "program": "cmd.exe",
+  "args": ["/c", "go", "run", "${file}", "&", "pause"],
+  "cwd": "${workspaceFolder}",
+  "icon": "play"
+}
+```
+
 ---
 
 ## 🎯 Usage
@@ -230,15 +304,30 @@ Set active profile: `"launcher.activeProfile": "ops"`
 
 Access via Command Palette (`Ctrl+Shift+P`):
 
-- `Launcher: Open Shortcuts` - Show quick pick menu
-- `Launcher: Run Shortcut by ID` - Execute specific shortcut
-- `Launcher: Open Settings` - Configure shortcuts
-- `Launcher: Open Shortcut Editor` - Visual editor
-- `Launcher: Import Shortcuts (JSON)` - Import configuration
-- `Launcher: Export Shortcuts (JSON)` - Export configuration
-- `Launcher: Set Active Profile` - Switch profile
-- `Launcher: Generate tasks.json from Shortcuts` - Create VS Code tasks
-- `Launcher: Rescan Auto-Discovered Apps` - Refresh app detection
+**Main Commands:**
+- `Launcher Plus: Open Shortcuts` - Show quick pick menu
+- `Launcher Plus: Run Shortcut by ID` - Execute specific shortcut
+- `Launcher Plus: Open Settings File` - Choose Global or Workspace shortcuts file
+- `Launcher Plus: Search Shortcuts` - Search and run shortcuts by name
+
+**Configuration:**
+- `Launcher Plus: Open Settings` - Configure extension settings
+- `Launcher Plus: Open Shortcut Editor` - Visual editor (webview)
+- `Launcher Plus: Validate Shortcuts` - Check program paths and show report
+- `Launcher Plus: Clean Invalid Shortcuts` - Remove broken shortcuts
+
+**Import/Export:**
+- `Launcher Plus: Import Shortcuts (JSON)` - Import configuration
+- `Launcher Plus: Export Shortcuts (JSON)` - Export configuration
+- `Launcher Plus: Import Shortcuts into Workspace` - Workspace-specific import
+- `Launcher Plus: Export Shortcuts to Workspace` - Workspace-specific export
+
+**Advanced:**
+- `Launcher Plus: Set Active Profile` - Switch profile (dev/ops/etc)
+- `Launcher Plus: Generate tasks.json` - Create VS Code tasks from shortcuts
+- `Launcher Plus: Rescan Auto-Discovered Apps` - Refresh app detection
+- `Launcher Plus: Clear Cooldowns & Cache` - Reset all caches
+- `Launcher Plus: Debug Info` - Show diagnostic information
 
 ### Keybindings
 
