@@ -28,59 +28,106 @@
   ],
   "icon": "media/icon.png",
   "activationEvents": [
-    "onStartupFinished",
-    "onCommand:launcher.openQuickPick",
-    "onCommand:launcher.run",
-    "onView:launcher.shortcutsView"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "launcher.openQuickPick",
-        "title": "Launcher: Open Shortcuts"
+        "title": "Launcher Plus: Open Shortcuts"
       },
       {
         "command": "launcher.run",
-        "title": "Launcher: Run Shortcut by ID",
-        "category": "Launcher",
+        "title": "Launcher Plus: Run Shortcut by ID",
+        "category": "Launcher Plus",
         "enablement": "true"
       },
       {
         "command": "launcher.openSettings",
-        "title": "Launcher: Open Settings"
+        "title": "Launcher Plus: Open Settings"
       },
       {
         "command": "launcher.exportShortcuts",
-        "title": "Launcher: Export Shortcuts (JSON)"
+        "title": "Launcher Plus: Export Shortcuts (JSON)"
       },
       {
         "command": "launcher.importShortcuts",
-        "title": "Launcher: Import Shortcuts (JSON)"
+        "title": "Launcher Plus: Import Shortcuts (JSON)"
       },
       {
         "command": "launcher.rescanAutoDiscover",
-        "title": "Launcher: Rescan Auto-Discovered Apps"
+        "title": "Launcher Plus: Rescan Auto-Discovered Apps",
+        "icon": "$(refresh)"
       },
       {
         "command": "launcher.generateTasks",
-        "title": "Launcher: Generate tasks.json from Shortcuts"
+        "title": "Launcher Plus: Generate tasks.json from Shortcuts"
       },
       {
         "command": "launcher.setActiveProfile",
-        "title": "Launcher: Set Active Profile"
+        "title": "Launcher Plus: Set Active Profile"
       },
       {
         "command": "launcher.exportShortcutsWorkspace",
-        "title": "Launcher: Export Shortcuts to Workspace (JSON)"
+        "title": "Launcher Plus: Export Shortcuts to Workspace (JSON)"
       },
       {
         "command": "launcher.importShortcutsWorkspace",
-        "title": "Launcher: Import Shortcuts into Workspace (JSON)"
+        "title": "Launcher Plus: Import Shortcuts into Workspace (JSON)"
       },
       {
         "command": "launcher.openEditor",
-        "title": "Launcher: Open Shortcut Editor"
+        "title": "Launcher Plus: Open Shortcut Editor"
+      },
+      {
+        "command": "launcher.openSettingsFile",
+        "title": "Launcher Plus: Open Settings File",
+        "icon": "$(json)"
+      },
+      {
+        "command": "launcher.validateShortcuts",
+        "title": "Launcher Plus: Validate Shortcuts",
+        "icon": "$(search)"
+      },
+      {
+        "command": "launcher.clearCooldowns",
+        "title": "Launcher Plus: Clear Cooldowns & Cache"
+      },
+      {
+        "command": "launcher.cleanInvalidShortcuts",
+        "title": "Launcher Plus: Clean Invalid Shortcuts",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "launcher.searchShortcuts",
+        "title": "Launcher Plus: Search Shortcuts",
+        "icon": "$(search)"
+      },
+      {
+        "command": "launcher.debug",
+        "title": "Launcher Plus: Debug Info",
+        "icon": "$(bug)"
+      },
+      {
+        "command": "launcher.diagnoseLaunch",
+        "title": "Launcher Plus: Diagnose App Paths",
+        "icon": "$(search-view-icon)"
+      },
+      {
+        "command": "launcher.testElectronSolutions",
+        "title": "Launcher Plus: Test Electron Solutions",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "launcher.testLaunchStrategies",
+        "title": "Launcher Plus: Test Launch Strategies",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "launcher.testVisibility",
+        "title": "Launcher Plus: Test App Visibility",
+        "icon": "$(eye)"
       }
     ],
     "configuration": {
@@ -88,21 +135,7 @@
       "properties": {
         "launcher.shortcuts": {
           "type": "array",
-          "default": [
-            {
-              "id": "open-doc-default",
-              "label": "Open in Default App",
-              "program": "",
-              "args": [
-                "${file}"
-              ],
-              "cwd": "${workspaceFolder}",
-              "env": {},
-              "runAsAdmin": false,
-              "when": "",
-              "platform": "win"
-            }
-          ],
+          "default": [],
           "markdownDescription": "List of shortcuts. Keys: id, label, program (empty uses OS default handler), args, cwd, env, runAsAdmin (Windows), when (VS Code when-clause-like condition), platform (win/mac/linux). Variables: ${file}, ${workspaceFolder}, ${relativeFile}, ${lineNumber}, ${selectedText}.\nNew fields: `icon` (codicon or absolute file path), `sequence` (array of inline steps or shortcut IDs) for multi-target execution.\nYou can set `profile` on a shortcut and control visibility with `launcher.activeProfile`. Also `sequenceMode`: `serial|parallel`."
         },
         "launcher.recentLimit": {
@@ -143,27 +176,28 @@
       "explorer": [
         {
           "id": "launcher.shortcutsView",
-          "name": "Shortcuts",
-          "when": "config.launcher.showInExplorer"
+          "name": "🚀Launcher Plus",
+          "when": "config.launcher.showInExplorer",
+          "icon": "rocket"
         }
       ]
     },
     "menus": {
       "view/title": [
         {
-          "command": "launcher.openSettings",
+          "command": "launcher.rescanAutoDiscover",
           "when": "view == launcher.shortcutsView",
           "group": "navigation"
         },
         {
-          "command": "launcher.openQuickPick",
-          "when": "view == launcher.shortcutsView",
-          "group": "navigation"
-        },
-        {
-          "command": "launcher.openEditor",
+          "command": "launcher.openSettingsFile",
           "when": "view == launcher.shortcutsView",
           "group": "navigation@2"
+        },
+        {
+          "command": "launcher.searchShortcuts",
+          "when": "view == launcher.shortcutsView",
+          "group": "navigation@3"
         }
       ],
       "editor/context": [

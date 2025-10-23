@@ -1,0 +1,56 @@
+[
+  {
+    "id": "dev-setup",
+    "label": "🚀 Dev Environment Setup",
+    "icon": "rocket",
+    "sequence": [
+      "cmd",
+      "wsl",
+      {
+        "program": "code",
+        "args": ["${workspaceFolder}"]
+      }
+    ],
+    "sequenceMode": "parallel",
+    "profile": "dev"
+  },
+  {
+    "id": "quick-diagnostics",
+    "label": "🔍 System Diagnostics",
+    "icon": "pulse",
+    "sequence": [
+      "ping-google",
+      "task-manager",
+      {
+        "program": "cmd.exe",
+        "args": ["/c", "systeminfo", "&", "pause"]
+      }
+    ],
+    "sequenceMode": "serial"
+  },
+  {
+    "id": "open-project-tools",
+    "label": "📁 Project Tools",
+    "icon": "tools",
+    "sequence": [
+      "explorer-here",
+      {
+        "program": "cmd.exe",
+        "args": ["/c", "dir", "&", "pause"],
+        "cwd": "${workspaceFolder}"
+      }
+    ]
+  },
+  {
+    "id": "admin-tools",
+    "label": "⚙️ Admin Tools",
+    "icon": "shield",
+    "sequence": [
+      "registry-editor",
+      "services",
+      "device-manager"
+    ],
+    "runAsAdmin": true,
+    "profile": "admin"
+  }
+]

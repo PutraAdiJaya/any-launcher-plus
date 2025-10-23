@@ -1,0 +1,62 @@
+{
+  "bookmarks": [
+    {
+      "title": "\"publisher\": \"PutraAdiJaya\",",
+      "description": "",
+      "filePath": "package.json",
+      "line": 4,
+      "column": 2,
+      "tags": [
+        "TODO"
+      ],
+      "id": "6eeb64abcf122d01674b1772f3e26519",
+      "createdAt": "2025-10-19T17:26:20.979Z",
+      "updatedAt": "2025-10-19T17:26:20.979Z"
+    },
+    {
+      "title": "# 🚀 Launcher Plus (Shortcuts)",
+      "description": "",
+      "filePath": "README.md",
+      "line": 2,
+      "column": 0,
+      "tags": [
+        "TODO"
+      ],
+      "id": "1bb2346f40d24d10b3fb6e27325bccd7",
+      "createdAt": "2025-10-19T17:26:38.667Z",
+      "updatedAt": "2025-10-19T17:26:38.667Z"
+    },
+    {
+      "title": "\"label\": \"Command Prompt\",",
+      "description": "",
+      "filePath": ".vscode/launcher-putra.json",
+      "line": 3,
+      "column": 0,
+      "tags": [
+        "TODO"
+      ],
+      "id": "1a2285da6353a9d1f7e6e579a75a2750",
+      "createdAt": "2025-10-19T18:21:47.967Z",
+      "updatedAt": "2025-10-19T18:21:47.967Z"
+    },
+    {
+      "title": "const candidates = [",
+      "description": "",
+      "filePath": "src/extension.ts",
+      "line": 986,
+      "column": 4,
+      "tags": [
+        "TODO"
+      ],
+      "id": "ebef5d501fae557233437f454a5a419f",
+      "createdAt": "2025-10-19T18:48:44.373Z",
+      "updatedAt": "2025-10-19T18:48:44.373Z"
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "workspacePath": "",
+    "totalBookmarks": 4,
+    "lastModified": "2025-10-19T18:48:44.373Z"
+  }
+}

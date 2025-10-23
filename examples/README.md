@@ -36,6 +36,18 @@ Features:
 
 Perfect for: Power users who want to automate complex workflows
 
+### 4. windows_enhanced.json
+**Enhanced Windows shortcuts with default system tools**
+
+Features:
+- Development environment setup (parallel execution)
+- System diagnostics sequence
+- Project management tools
+- Admin tools with profile filtering
+- Uses built-in default shortcuts
+
+Perfect for: Windows developers and system administrators
+
 ## 🚀 How to Use
 
 ### Method 1: Visual Editor (Recommended)

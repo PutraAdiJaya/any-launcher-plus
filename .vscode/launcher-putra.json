@@ -1,0 +1,463 @@
+[
+  {
+    "id": "cmd",
+    "label": "Command Prompt",
+    "program": "cmd.exe",
+    "args": [],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "terminal"
+  },
+  {
+    "id": "powershell",
+    "label": "PowerShell",
+    "program": "powershell.exe",
+    "args": [],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "terminal-powershell"
+  },
+  {
+    "id": "wsl",
+    "label": "WSL",
+    "program": "wsl.exe",
+    "args": [],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "terminal-linux"
+  },
+  {
+    "id": "git-bash",
+    "label": "Git Bash",
+    "program": "C:\\Program Files\\Git\\git-bash.exe",
+    "args": [],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "source-control"
+  },
+  {
+    "id": "explorer-here",
+    "label": "Explorer (Current Folder)",
+    "program": "explorer.exe",
+    "args": ["${workspaceFolder}"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "folder-opened"
+  },
+  {
+    "id": "task-manager",
+    "label": "Task Manager",
+    "program": "taskmgr.exe",
+    "args": [],
+    "platform": "win",
+    "icon": "list-tree"
+  },
+  {
+    "id": "node-repl",
+    "label": "Node.js REPL",
+    "program": "cmd.exe",
+    "args": ["/c", "node", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "symbol-method"
+  },
+  {
+    "id": "python-repl",
+    "label": "Python REPL",
+    "program": "cmd.exe",
+    "args": ["/c", "python", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "symbol-method"
+  },
+  {
+    "id": "npm-install",
+    "label": "npm install",
+    "program": "cmd.exe",
+    "args": ["/c", "npm", "install", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "package"
+  },
+  {
+    "id": "npm-start",
+    "label": "npm start",
+    "program": "cmd.exe",
+    "args": ["/c", "npm", "start"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "play"
+  },
+  {
+    "id": "npm-test",
+    "label": "npm test",
+    "program": "cmd.exe",
+    "args": ["/c", "npm", "test", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "beaker"
+  },
+  {
+    "id": "yarn-install",
+    "label": "yarn install",
+    "program": "cmd.exe",
+    "args": ["/c", "yarn", "install", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "package"
+  },
+  {
+    "id": "docker-desktop",
+    "label": "Docker Desktop",
+    "program": "C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe",
+    "args": [],
+    "platform": "win",
+    "icon": "server-environment"
+  },
+  {
+    "id": "chrome-dev",
+    "label": "Chrome (Dev Mode)",
+    "program": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "args": ["--auto-open-devtools-for-tabs", "http://localhost:3000"],
+    "platform": "win",
+    "icon": "browser"
+  },
+  {
+    "id": "postman",
+    "label": "Postman",
+    "program": "C:\\Users\\${env:USERNAME}\\AppData\\Local\\Postman\\Postman.exe",
+    "args": [],
+    "platform": "win",
+    "icon": "globe"
+  },
+  {
+    "id": "git-status",
+    "label": "Git Status",
+    "program": "cmd.exe",
+    "args": ["/c", "git", "status", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "git-branch"
+  },
+  {
+    "id": "git-log",
+    "label": "Git Log (Graph)",
+    "program": "cmd.exe",
+    "args": ["/c", "git", "log", "--oneline", "--graph", "--all", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "git-commit"
+  },
+  {
+    "id": "port-check",
+    "label": "Check Port 3000",
+    "program": "cmd.exe",
+    "args": ["/c", "netstat", "-an", "|", "findstr", ":3000", "&", "pause"],
+    "platform": "win",
+    "icon": "plug"
+  },
+  {
+    "id": "localhost-3000",
+    "label": "Open localhost:3000",
+    "program": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "args": ["http://localhost:3000"],
+    "platform": "win",
+    "icon": "preview"
+  },
+  {
+    "id": "localhost-8080",
+    "label": "Open localhost:8080",
+    "program": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "args": ["http://localhost:8080"],
+    "platform": "win",
+    "icon": "preview"
+  },
+  {
+    "id": "npm-run-serve",
+    "label": "📦 npm run serve",
+    "program": "cmd.exe",
+    "args": ["/c", "npm", "run", "serve"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "run"
+  },
+  {
+    "id": "npm-run-dev",
+    "label": "📦 npm run dev",
+    "program": "cmd.exe",
+    "args": ["/c", "npm", "run", "dev"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "run"
+  },
+  {
+    "id": "npm-run-build",
+    "label": "📦 npm run build",
+    "program": "cmd.exe",
+    "args": ["/c", "npm", "run", "build", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "tools"
+  },
+  {
+    "id": "npm-run-lint",
+    "label": "📦 npm run lint",
+    "program": "cmd.exe",
+    "args": ["/c", "npm", "run", "lint", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "search"
+  },
+  {
+    "id": "go-run-main",
+    "label": "🚀 go run main.go",
+    "program": "cmd.exe",
+    "args": ["/c", "go", "run", "main.go"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "play"
+  },
+  {
+    "id": "go-build",
+    "label": "🔨 go build",
+    "program": "cmd.exe",
+    "args": ["/c", "go", "build", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "tools"
+  },
+  {
+    "id": "go-test",
+    "label": "🧪 go test",
+    "program": "cmd.exe",
+    "args": ["/c", "go", "test", "./...", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "beaker"
+  },
+  {
+    "id": "cargo-run",
+    "label": "🦀 cargo run",
+    "program": "cmd.exe",
+    "args": ["/c", "cargo", "run"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "play"
+  },
+  {
+    "id": "cargo-build",
+    "label": "🔨 cargo build",
+    "program": "cmd.exe",
+    "args": ["/c", "cargo", "build", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "tools"
+  },
+  {
+    "id": "cargo-test",
+    "label": "🧪 cargo test",
+    "program": "cmd.exe",
+    "args": ["/c", "cargo", "test", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "beaker"
+  },
+  {
+    "id": "python-main",
+    "label": "🐍 python main.py",
+    "program": "cmd.exe",
+    "args": ["/c", "python", "main.py"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "play"
+  },
+  {
+    "id": "django-runserver",
+    "label": "🌐 python manage.py runserver",
+    "program": "cmd.exe",
+    "args": ["/c", "python", "manage.py", "runserver"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "server"
+  },
+  {
+    "id": "mvn-clean-install",
+    "label": "☕ mvn clean install",
+    "program": "cmd.exe",
+    "args": ["/c", "mvn", "clean", "install", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "tools"
+  },
+  {
+    "id": "mvn-test",
+    "label": "🧪 mvn test",
+    "program": "cmd.exe",
+    "args": ["/c", "mvn", "test", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "beaker"
+  },
+  {
+    "id": "gradle-build",
+    "label": "🐘 gradle build",
+    "program": "cmd.exe",
+    "args": ["/c", "gradlew.bat", "build", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "tools"
+  },
+  {
+    "id": "gradle-test",
+    "label": "🧪 gradle test",
+    "program": "cmd.exe",
+    "args": ["/c", "gradlew.bat", "test", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "beaker"
+  },
+  {
+    "id": "dotnet-run",
+    "label": "⚡ dotnet run",
+    "program": "cmd.exe",
+    "args": ["/c", "dotnet", "run"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "play"
+  },
+  {
+    "id": "dotnet-build",
+    "label": "🔨 dotnet build",
+    "program": "cmd.exe",
+    "args": ["/c", "dotnet", "build", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "tools"
+  },
+  {
+    "id": "dotnet-test",
+    "label": "🧪 dotnet test",
+    "program": "cmd.exe",
+    "args": ["/c", "dotnet", "test", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "beaker"
+  },
+  {
+    "id": "docker-compose-up",
+    "label": "🐳 docker-compose up",
+    "program": "cmd.exe",
+    "args": ["/c", "docker-compose", "up"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "server-process"
+  },
+  {
+    "id": "docker-compose-down",
+    "label": "🛑 docker-compose down",
+    "program": "cmd.exe",
+    "args": ["/c", "docker-compose", "down", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "debug-stop"
+  },
+  {
+    "id": "make",
+    "label": "🔧 make",
+    "program": "cmd.exe",
+    "args": ["/c", "make", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "tools"
+  },
+  {
+    "id": "make-clean",
+    "label": "🧹 make clean",
+    "program": "cmd.exe",
+    "args": ["/c", "make", "clean", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "trash"
+  },
+  {
+    "id": "ssh-localhost",
+    "label": "🔐 SSH to localhost",
+    "program": "cmd.exe",
+    "args": ["/c", "ssh", "localhost"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "lock"
+  },
+  {
+    "id": "ssh-localhost-wsl",
+    "label": "🔐 SSH to localhost (WSL)",
+    "program": "cmd.exe",
+    "args": ["/c", "ssh", "localhost", "-p", "22"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "terminal-linux"
+  },
+  {
+    "id": "ssh-localhost-user",
+    "label": "🔐 SSH to localhost (custom user)",
+    "program": "cmd.exe",
+    "args": ["/c", "ssh", "user@localhost"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "person"
+  },
+  {
+    "id": "ssh-localhost-port",
+    "label": "🔐 SSH to localhost (port 2222)",
+    "program": "cmd.exe",
+    "args": ["/c", "ssh", "localhost", "-p", "2222"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "plug"
+  },
+  {
+    "id": "ssh-config-test",
+    "label": "🔍 SSH Test Config",
+    "program": "cmd.exe",
+    "args": ["/c", "ssh", "-T", "localhost", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "search"
+  },
+  {
+    "id": "ssh-keygen",
+    "label": "🔑 SSH Generate Key",
+    "program": "cmd.exe",
+    "args": ["/c", "ssh-keygen", "-t", "rsa", "-b", "4096", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "key"
+  },
+  {
+    "id": "ssh-copy-id",
+    "label": "📋 SSH Copy ID to localhost",
+    "program": "cmd.exe",
+    "args": ["/c", "type", "%USERPROFILE%\\.ssh\\id_rsa.pub", "|", "ssh", "localhost", "\"cat >> ~/.ssh/authorized_keys\"", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "file-symlink-file"
+  },
+  {
+    "id": "scp-to-localhost",
+    "label": "📤 SCP to localhost",
+    "program": "cmd.exe",
+    "args": ["/c", "scp", "${file}", "localhost:/tmp/", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "cloud-upload"
+  },
+  {
+    "id": "scp-from-localhost",
+    "label": "📥 SCP from localhost",
+    "program": "cmd.exe",
+    "args": ["/c", "scp", "localhost:/tmp/file.txt", ".", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "cloud-download"
+  }
+]

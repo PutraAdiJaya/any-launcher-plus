@@ -36,6 +36,19 @@ Launch applications, run scripts, and open documents directly from your editor w
 - **⚙️ Task Generation** - Convert shortcuts to VS Code tasks
 - **✏️ Visual Editor** - Edit shortcuts with built-in webview editor
 
+### 🚀 New Features (v0.1.0)
+
+- **🌍 Global Shortcuts** - Define shortcuts once, use everywhere across all workspaces
+- **🎉 Auto-Initialization** - Default shortcuts auto-created on first install with 90+ ready-to-use commands
+- **🔄 Auto-Recovery** - Deleted shortcuts file? No problem! Automatically restored from template
+- **🛡️ Double-Click Prevention** - Smart 300ms cooldown prevents accidental multiple executions
+- **📊 Loading Indicators** - Real-time visual feedback with status bar messages
+- **🔍 Smart Validation** - Automatic program path verification with detailed reports
+- **🔧 Auto-Fix Engine** - Intelligent detection and fixing of invalid program paths
+- **🚫 Duplicate Prevention** - Advanced deduplication by ID ensures clean shortcut list
+- **🔐 SSH Shortcuts** - Built-in SSH/SCP templates for localhost and remote connections
+- **⚡ Build Commands** - Pre-configured shortcuts for npm, go, cargo, docker, maven, gradle, dotnet, make
+
 ### Cross-Platform Support
 
 - ✅ Windows
@@ -54,23 +67,16 @@ Launch applications, run scripts, and open documents directly from your editor w
 3. Run command: `Extensions: Install from VSIX...`
 4. Select the downloaded file
 
-### From Source
-
-```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
-cd YOUR_REPOSITORY
-npm install
-npm run compile
-npm run package
-```
-
-Then install the generated `.vsix` file.
-
----
-
 ## ⚙️ Configuration
 
-### Basic Setup
+### Quick Setup
+
+1. **Open Settings File**: Use `Ctrl+Shift+P` → `Launcher: Open Settings File`
+2. **Auto-Creation**: File is created automatically with default shortcuts
+3. **Edit & Save**: Modify shortcuts and save the file
+4. **Reload**: Use the 🔄 reload button in the Shortcuts panel
+
+### Manual Setup
 
 Add shortcuts to your settings (JSON):
 
@@ -95,6 +101,38 @@ Add shortcuts to your settings (JSON):
   ]
 }
 ```
+
+### Default Shortcuts
+
+The extension automatically creates default shortcuts in editor-specific folders:
+
+**File Locations:**
+
+- VS Code: `.vscode/launcher-putra.json`
+- Cursor: `.cursor/launcher-putra.json`
+- Windsurf: `.windsurf/launcher-putra.json`
+- Kiro: `.kiro/launcher-putra.json`
+
+**Developer-Focused Shortcuts (Windows):**
+
+- 💻 **Terminals**: Command Prompt, PowerShell, WSL, Git Bash
+- 📦 **Package Managers**: npm install/start/test, yarn install
+- 🔧 **Development Tools**: Node.js REPL, Python REPL, Docker Desktop
+- 🌐 **Web Development**: Chrome Dev Mode, localhost shortcuts (3000, 8080)
+- 📁 **File Management**: Explorer (Current Folder)
+- 🔍 **Git Operations**: Git Status, Git Log (Graph)
+- 🚀 **API Testing**: Postman integration
+- 🔌 **Network Tools**: Port checker, localhost openers
+- 📊 **System Monitoring**: Task Manager
+
+**Auto-Discovery:**
+The extension automatically detects and adds shortcuts for installed applications:
+
+- 🌐 Browsers: Chrome, Firefox, Edge
+- 📝 Editors: VS Code variants, Notepad++, Sublime Text
+- 💻 Terminals: Git Bash, Windows Terminal, PowerShell Core
+- 📊 Office: Word, Excel, PowerPoint, Outlook
+- 🔧 Development: Node.js, Python, Git Bash
 
 ### Shortcut Properties
 

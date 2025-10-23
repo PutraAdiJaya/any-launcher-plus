@@ -1,0 +1,89 @@
+[
+  {
+    "id": "cursor-new-window",
+    "label": "🚀 New Cursor Window",
+    "program": "cursor",
+    "args": ["-n"],
+    "icon": "window"
+  },
+  {
+    "id": "cmd",
+    "label": "Command Prompt",
+    "program": "cmd.exe",
+    "args": [],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "terminal"
+  },
+  {
+    "id": "powershell",
+    "label": "PowerShell",
+    "program": "powershell.exe",
+    "args": [],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "terminal-powershell"
+  },
+  {
+    "id": "wsl",
+    "label": "WSL",
+    "program": "wsl.exe",
+    "args": [],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "terminal-linux"
+  },
+  {
+    "id": "git-bash",
+    "label": "Git Bash",
+    "program": "C:\\Program Files\\Git\\git-bash.exe",
+    "args": [],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "source-control"
+  },
+  {
+    "id": "explorer-here",
+    "label": "Explorer (Current Folder)",
+    "program": "explorer.exe",
+    "args": ["${workspaceFolder}"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "folder-opened"
+  },
+  {
+    "id": "npm-install",
+    "label": "npm install",
+    "program": "cmd.exe",
+    "args": ["/c", "npm", "install", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "package"
+  },
+  {
+    "id": "npm-start",
+    "label": "npm start",
+    "program": "cmd.exe",
+    "args": ["/c", "npm", "start"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "play"
+  },
+  {
+    "id": "git-status",
+    "label": "Git Status",
+    "program": "cmd.exe",
+    "args": ["/c", "git", "status", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "git-branch"
+  },
+  {
+    "id": "localhost-3000",
+    "label": "Open localhost:3000",
+    "program": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "args": ["http://localhost:3000"],
+    "platform": "win",
+    "icon": "preview"
+  }
+]
