@@ -3,7 +3,7 @@
   "displayName": "Launcher Plus (Shortcuts)",
   "description": "Shortcut list to launch apps, scripts, or open docs from VS Code / Cursor / Windsurf. Tree view, QuickPick, variables, recent items.",
   "publisher": "PutraAdiJaya",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/PutraAdiJaya/any-launcher-plus.git"
@@ -228,7 +228,7 @@
     "watch": "tsc -watch -p ./",
     "prepackage": "npm run compile",
     "package": "vsce package",
-    "publish:ovsx": "ovsx publish -p $OVSX_TOKEN",
+    "publish:ovsx": "ovsx publish",
     "publish:vsce": "vsce publish",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
@@ -252,5 +252,8 @@
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.46.1",
     "vsce": "^2.15.0"
+  },
+  "dependencies": {
+    "imagemagick": "^0.1.3"
   }
 }

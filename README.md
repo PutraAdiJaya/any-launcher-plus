@@ -1,16 +1,17 @@
+# Launcher Plus (Shortcuts)
+
 <div align="center">
 
-# 🚀 Launcher Plus (Shortcuts)
+![Launcher Plus Banner](media/banner.png)
 
-**Powerful shortcut manager for VS Code, Cursor, and Windsurf**
+[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/PutraAdiJaya/any-launcher-plus)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Downloads](https://img.shields.io/badge/downloads-1k+-brightgreen)](https://github.com/PutraAdiJaya/any-launcher-plus/releases)
+[![Rating](https://img.shields.io/badge/rating-★★★★★-yellow)](https://github.com/PutraAdiJaya/any-launcher-plus)
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://github.com/PutraAdiJaya/any-launcher-plus)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![CI](https://github.com/PutraAdiJaya/any-launcher-plus/workflows/CI/badge.svg)](https://github.com/PutraAdiJaya/any-launcher-plus/actions)
+**Launch applications, run scripts, and open documents directly from your editor with customizable shortcuts and automation workflows.**
 
-Launch applications, run scripts, and open documents directly from your editor with customizable shortcuts and automation workflows.
-
-[Quick Start](QUICKSTART.md) • [Features](#-features) • [Installation](#-installation) • [Configuration](#-configuration) • [Examples](#-examples) • [Contributing](CONTRIBUTING.md)
+[🚀 Quick Start](#-installation) • [✨ Features](#-features) • [⚙️ Configuration](#️-configuration) • [📚 Examples](#-examples) • [🤝 Contributing](#-contributing)
 
 </div>
 
@@ -18,25 +19,55 @@ Launch applications, run scripts, and open documents directly from your editor w
 
 ## ✨ Features
 
-### Core Capabilities
+<div align="center">
 
-- **🌳 Tree View Panel** - Organized shortcuts in Explorer sidebar
-- **⚡ Quick Pick** - Fast command palette integration (`Ctrl+Alt+L`)
+| 🚀 **Core Features** | ⚡ **Advanced Features** | 🛠️ **Developer Tools** |
+|:---:|:---:|:---:|
+| Tree View Panel | Sequence Execution | Auto-Discovery |
+| Quick Pick (`Ctrl+Alt+L`) | Profile Management | Import/Export |
+| Context Variables | Visual Editor | Task Generation |
+| Default App Handler | Recent Items | Smart Validation |
+
+</div>
+
+### 🎯 Core Capabilities
+
+- **🌳 Tree View Panel** - Organized shortcuts in Explorer sidebar with intuitive navigation
+- **⚡ Quick Pick** - Lightning-fast command palette integration (`Ctrl+Alt+L`)
 - **🔧 Context Variables** - Dynamic path resolution with `${file}`, `${workspaceFolder}`, `${relativeFile}`, `${lineNumber}`, `${selectedText}`
-- **📂 Default App Handler** - Open files with OS default applications
+- **📂 Default App Handler** - Open files with OS default applications seamlessly
 - **🕐 Recent Items** - Track and quickly access recently used shortcuts
-- **🎨 Custom Icons** - Use VS Code icons or custom images
+- **🎨 Custom Icons** - Use VS Code codicons or custom images for visual appeal
 
-### Advanced Features
+### 🚀 Advanced Features
 
-- **🔄 Sequence Execution** - Chain multiple commands (serial or parallel)
-- **👥 Profile Management** - Filter shortcuts by active profile (dev, ops, etc.)
+<div align="center">
+
+![Features Overview](media/features-diagram.png)
+
+</div>
+
+- **🔄 Sequence Execution** - Chain multiple commands (serial or parallel execution)
+- **👥 Profile Management** - Filter shortcuts by active profile (dev, ops, testing, etc.)
 - **🔍 Auto-Discovery** - Automatically detect installed apps (Chrome, Office, Git Bash, WSL)
-- **📤 Import/Export** - Share configurations across workspaces
-- **⚙️ Task Generation** - Convert shortcuts to VS Code tasks
-- **✏️ Visual Editor** - Edit shortcuts with built-in webview editor
+- **📤 Import/Export** - Share configurations across workspaces and teams
+- **⚙️ Task Generation** - Convert shortcuts to VS Code tasks for build integration
+- **✏️ Visual Editor** - Edit shortcuts with built-in webview editor interface
 
-### 🚀 New Features (v0.1.0)
+### 🎉 What's New in v0.1.0
+
+<div align="center">
+
+```
+🌍 Global Shortcuts    🎉 Auto-Initialization    🔄 Auto-Recovery
+�️ Smarot Cooldowns     📊 Loading Indicators     🔍 Smart Validation
+� Auto-Fix  Engine     🚫 Duplicate Prevention   🔐 SSH Templates
+⚡ Build Commands      🎯 90+ Ready Commands     🚀 Enhanced UX
+```
+
+</div>
+
+**🌟 Major Enhancements:**
 
 - **🌍 Global Shortcuts** - Define shortcuts once, use everywhere across all workspaces
 - **🎉 Auto-Initialization** - Default shortcuts auto-created on first install with 90+ ready-to-use commands
@@ -60,12 +91,25 @@ Launch applications, run scripts, and open documents directly from your editor w
 
 ## 📦 Installation
 
+<div align="center">
+
+### 🚀 Quick Install Options
+
+| Method | Status | Instructions |
+|:---:|:---:|:---|
+| **🎯 VSIX** | ✅ **Recommended** | Download `.vsix` → Install from VSIX |
+| **🏪 Marketplace** | 🔄 Coming Soon | Search "Launcher Plus" in Extensions |
+| **📦 OpenVSX** | 🔄 Coming Soon | Alternative marketplace |
+
+</div>
+
 ### From VSIX (Recommended)
 
-1. Download the latest `.vsix` file from releases
-2. Open VS Code/Cursor/Windsurf
-3. Run command: `Extensions: Install from VSIX...`
-4. Select the downloaded file
+1. **📥 Download** the latest `.vsix` file from [releases](https://github.com/PutraAdiJaya/any-launcher-plus/releases)
+2. **🚀 Open** VS Code/Cursor/Windsurf
+3. **⚙️ Run command**: `Extensions: Install from VSIX...`
+4. **📂 Select** the downloaded file
+5. **🎉 Enjoy** 90+ pre-configured shortcuts!
 
 ## ⚙️ Configuration
 
@@ -494,8 +538,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**Made with ❤️ for the VS Code community**
+### 🌟 Made with ❤️ for the VS Code Community
 
-[⬆ Back to Top](#-launcher-plus-shortcuts)
+**Launcher Plus** - Empowering developers with seamless workflow automation
+
+[![GitHub Stars](https://img.shields.io/github/stars/PutraAdiJaya/any-launcher-plus?style=social)](https://github.com/PutraAdiJaya/any-launcher-plus/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/PutraAdiJaya/any-launcher-plus?style=social)](https://github.com/PutraAdiJaya/any-launcher-plus/network/members)
+
+[⬆ Back to Top](#launcher-plus-shortcuts) • [🚀 Get Started](#-installation) • [⭐ Star on GitHub](https://github.com/PutraAdiJaya/any-launcher-plus)
 
 </div>

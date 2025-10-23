@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e9ecef;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="600" height="400" fill="#ffffff"/>
+  
+  <!-- Title -->
+  <text x="300" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#2c3e50">
+    Launcher Plus Features
+  </text>
+  
+  <!-- Feature Cards -->
+  
+  <!-- Quick Pick -->
+  <g transform="translate(50, 60)">
+    <rect width="120" height="80" rx="8" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <text x="60" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#3498db">⚡</text>
+    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Quick Pick</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">Ctrl+Alt+L</text>
+  </g>
+  
+  <!-- Tree View -->
+  <g transform="translate(200, 60)">
+    <rect width="120" height="80" rx="8" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <text x="60" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#27ae60">🌳</text>
+    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Tree View</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">Explorer Panel</text>
+  </g>
+  
+  <!-- Auto Discovery -->
+  <g transform="translate(350, 60)">
+    <rect width="120" height="80" rx="8" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <text x="60" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#e74c3c">🔍</text>
+    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Auto Discovery</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">Find Apps</text>
+  </g>
+  
+  <!-- Sequences -->
+  <g transform="translate(50, 170)">
+    <rect width="120" height="80" rx="8" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <text x="60" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#9b59b6">🔄</text>
+    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Sequences</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">Chain Commands</text>
+  </g>
+  
+  <!-- Profiles -->
+  <g transform="translate(200, 170)">
+    <rect width="120" height="80" rx="8" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <text x="60" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#f39c12">👥</text>
+    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Profiles</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">Dev/Ops/Test</text>
+  </g>
+  
+  <!-- Variables -->
+  <g transform="translate(350, 170)">
+    <rect width="120" height="80" rx="8" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <text x="60" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#1abc9c">🔧</text>
+    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Variables</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">${file} ${workspace}</text>
+  </g>
+  
+  <!-- Global Shortcuts -->
+  <g transform="translate(125, 280)">
+    <rect width="120" height="80" rx="8" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <text x="60" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#34495e">🌍</text>
+    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Global</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">All Workspaces</text>
+  </g>
+  
+  <!-- 90+ Commands -->
+  <g transform="translate(275, 280)">
+    <rect width="120" height="80" rx="8" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <text x="60" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#e67e22">⚡</text>
+    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">90+ Commands</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">Ready to Use</text>
+  </g>
+  
+  <!-- Connecting lines -->
+  <path d="M 300 50 Q 300 200 300 350" stroke="#bdc3c7" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M 100 200 Q 300 200 500 200" stroke="#bdc3c7" stroke-width="2" fill="none" opacity="0.5"/>
+</svg>
