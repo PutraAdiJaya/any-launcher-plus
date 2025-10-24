@@ -4,10 +4,11 @@
 
 ![Launcher Plus Banner](media/banner.png)
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/PutraAdiJaya/any-launcher-plus)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue)](https://github.com/PutraAdiJaya/any-launcher-plus)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Downloads](https://img.shields.io/badge/downloads-1k+-brightgreen)](https://github.com/PutraAdiJaya/any-launcher-plus/releases)
-[![Rating](https://img.shields.io/badge/rating-★★★★★-yellow)](https://github.com/PutraAdiJaya/any-launcher-plus)
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/d/PutraAdiJaya.any-launcher-plus?label=VS%20Code%20Downloads)](https://marketplace.visualstudio.com/items?itemName=PutraAdiJaya.any-launcher-plus)
+[![OpenVSX Downloads](https://img.shields.io/open-vsx/dt/PutraAdiJaya/any-launcher-plus?label=OpenVSX%20Downloads)](https://open-vsx.org/extension/PutraAdiJaya/any-launcher-plus)
+[![GitHub Release](https://img.shields.io/github/v/release/PutraAdiJaya/any-launcher-plus)](https://github.com/PutraAdiJaya/any-launcher-plus/releases)
 
 **Launch applications, run scripts, and open documents directly from your editor with customizable shortcuts and automation workflows.**
 
@@ -47,6 +48,8 @@
 
 </div>
 
+- **▶️ Play Button Interface** - Clean inline play buttons for each shortcut (no more accidental clicks!)
+- **🎨 Smart Color Grouping** - 17 distinct colored categories for instant visual recognition
 - **🔄 Sequence Execution** - Chain multiple commands (serial or parallel execution)
 - **👥 Profile Management** - Filter shortcuts by active profile (dev, ops, testing, etc.)
 - **🔍 Auto-Discovery** - Automatically detect installed apps (Chrome, Office, Git Bash, WSL)
@@ -54,7 +57,36 @@
 - **⚙️ Task Generation** - Convert shortcuts to VS Code tasks for build integration
 - **✏️ Visual Editor** - Edit shortcuts with built-in webview editor interface
 
-### 🎉 What's New in v0.1.0
+### 🎨 Smart Color Grouping (v1.1.0)
+
+**17 Intelligent Categories with Unique Colors:**
+
+<div align="center">
+
+| Category | Color | Icon | Examples |
+|:---:|:---:|:---:|:---|
+| 🧩 **Extension** | Orange | Extensions | VS Code extension development |
+| 🔐 **SSH** | Red | Lock | SSH, SCP, SFTP connections |
+| 🟢 **Node.js** | Green | Method | npm, yarn, webpack, vite |
+| 🔵 **Go** | Cyan | Go-to-file | go run, go build, go test |
+| 🟠 **Rust** | Orange | Gear | cargo, rust tools |
+| 🟣 **.NET** | Purple | Class | dotnet, C#, msbuild |
+| 🟡 **Java** | Yellow | Object | maven, gradle, java |
+| 🐍 **Python** | Blue | Snake | python, pip, django, flask |
+| 🐳 **Docker** | Bright Cyan | Package | docker, kubernetes |
+| 🗄️ **Database** | Bright Purple | Database | mysql, postgres, mongodb |
+| 📋 **Git** | Bright Yellow | Source Control | git, github, sourcetree |
+| 💻 **Terminal** | Bright Blue | Terminal | cmd, powershell, bash, wsl |
+| 🌐 **Browser** | Green | Browser | chrome, firefox, edge |
+| 📝 **Editor** | Bright Purple | Code | vscode, notepad, sublime |
+| 📁 **File** | Bright Yellow | Folder | explorer, downloads, documents |
+| 🎨 **Media** | Bright Red | Play | photoshop, vlc, gimp |
+| 💬 **Communication** | Bright Green | Chat | discord, slack, teams |
+| ⚙️ **System** | White | Settings | task manager, registry |
+
+</div>
+
+### 🎉 What's New in v1.1.0
 
 <div align="center">
 
@@ -68,6 +100,14 @@
 </div>
 
 **🌟 Major Enhancements:**
+
+- **▶️ Play Button Interface** - Clean inline play buttons replace click-to-run for better UX
+- **🎨 Smart Color Grouping** - 17 intelligent categories with unique colored icons
+- **🧩 Extension Development** - Auto-detected shortcuts for VS Code extension projects
+- **🔇 Reduced Notifications** - Silent execution with only essential error messages
+- **🎯 Improved Detection** - Enhanced pattern matching for better categorization
+
+**🚀 Previous Features (v1.0.0):**
 
 - **🌍 Global Shortcuts** - Define shortcuts once, use everywhere across all workspaces
 - **🎉 Auto-Initialization** - Default shortcuts auto-created on first install with 90+ ready-to-use commands
@@ -97,19 +137,25 @@
 
 | Method | Status | Instructions |
 |:---:|:---:|:---|
-| **🎯 VSIX** | ✅ **Recommended** | Download `.vsix` → Install from VSIX |
-| **🏪 Marketplace** | 🔄 Coming Soon | Search "Launcher Plus" in Extensions |
-| **📦 OpenVSX** | 🔄 Coming Soon | Alternative marketplace |
+| **🏪 VS Code Marketplace** | ✅ **Available** | Search "Launcher Plus" in Extensions |
+| **📦 OpenVSX** | ✅ **Available** | Alternative marketplace for VS Code variants |
+| **🎯 VSIX** | ✅ Manual Install | Download `.vsix` → Install from VSIX |
 
 </div>
 
-### From VSIX (Recommended)
+### From VS Code Marketplace (Recommended)
+
+1. **🚀 Open** VS Code/Cursor/Windsurf
+2. **🔍 Search** for "Launcher Plus" in Extensions panel
+3. **📥 Install** by PutraAdiJaya
+4. **🎉 Enjoy** 100+ pre-configured shortcuts with smart color grouping!
+
+### From VSIX (Manual)
 
 1. **📥 Download** the latest `.vsix` file from [releases](https://github.com/PutraAdiJaya/any-launcher-plus/releases)
 2. **🚀 Open** VS Code/Cursor/Windsurf
 3. **⚙️ Run command**: `Extensions: Install from VSIX...`
 4. **📂 Select** the downloaded file
-5. **🎉 Enjoy** 90+ pre-configured shortcuts!
 
 ## ⚙️ Configuration
 
@@ -171,7 +217,17 @@ The extension automatically creates default shortcuts on first install with 90+ 
 2. Workspace shortcuts loaded after (can override global by ID)
 3. Automatic deduplication prevents duplicates
 
-**Developer-Focused Shortcuts (90+ Commands):**
+**Developer-Focused Shortcuts (100+ Commands):**
+
+**🧩 VS Code Extension Development (Auto-detected):**
+- **Compile**: `npm run compile` - TypeScript compilation
+- **Package**: `npm run package` - Create .vsix file
+- **Publish OpenVSX**: `npm run publish:ovsx` - Publish to open-vsx.org
+- **Publish Marketplace**: `npm run publish:vsce` - Publish to VS Code Marketplace
+- **Watch**: `npm run watch` - Development watch mode
+- **Clean**: `npm run clean` - Clean build artifacts
+- **Lint**: `npm run lint` - Code linting
+- **Format**: `npm run format` - Code formatting
 
 **💻 Terminals & Shells:**
 - Command Prompt, PowerShell, WSL, Git Bash
@@ -540,11 +596,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### 🌟 Made with ❤️ for the VS Code Community
 
-**Launcher Plus** - Empowering developers with seamless workflow automation
+**Launcher Plus v1.1.0** - Empowering developers with seamless workflow automation and smart color grouping
 
 [![GitHub Stars](https://img.shields.io/github/stars/PutraAdiJaya/any-launcher-plus?style=social)](https://github.com/PutraAdiJaya/any-launcher-plus/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/PutraAdiJaya/any-launcher-plus?style=social)](https://github.com/PutraAdiJaya/any-launcher-plus/network/members)
+[![VS Code Marketplace](https://img.shields.io/badge/VS%20Code-Marketplace-blue?style=social&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=PutraAdiJaya.any-launcher-plus)
 
-[⬆ Back to Top](#launcher-plus-shortcuts) • [🚀 Get Started](#-installation) • [⭐ Star on GitHub](https://github.com/PutraAdiJaya/any-launcher-plus)
+**🎯 Key Features:** Play Button Interface • Smart Color Grouping • Extension Development • 100+ Auto-Shortcuts
+
+[⬆ Back to Top](#launcher-plus-shortcuts) • [🚀 Get Started](#-installation) • [⭐ Star on GitHub](https://github.com/PutraAdiJaya/any-launcher-plus) • [📦 VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=PutraAdiJaya.any-launcher-plus)
 
 </div>

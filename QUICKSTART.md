@@ -1,298 +1,171 @@
-# Quick Start Guide
+# 🚀 Quick Start Guide - Launcher Plus
 
-Get up and running with Launcher Plus in 5 minutes!
+Get up and running with Launcher Plus in under 5 minutes!
 
-## Installation
+## 📦 Installation
 
-### From VSIX File
-1. Download `any-launcher-plus-0.1.0.vsix`
-2. Open VS Code/Cursor/Windsurf
-3. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
-4. Type "Install from VSIX"
-5. Select the downloaded file
+### Option 1: VS Code Marketplace (Recommended)
+1. Open VS Code/Cursor/Windsurf
+2. Go to Extensions panel (`Ctrl+Shift+X`)
+3. Search for "Launcher Plus"
+4. Click Install on the extension by **PutraAdiJaya**
 
-### From Marketplace (Coming Soon)
-1. Open Extensions view (`Ctrl+Shift+X`)
-2. Search for "Launcher Plus"
-3. Click Install
+### Option 2: OpenVSX (Alternative)
+1. Open your VS Code variant
+2. Search "Launcher Plus" in Extensions
+3. Install from OpenVSX registry
 
-## First Steps
+## 🎯 First Steps
 
-### 1. Open Settings
+### 1. Open Launcher Plus Panel
+- Look for **🚀Launcher Plus** in the Explorer sidebar
+- If not visible, enable it: `View` → `Explorer` → Check `Launcher Plus`
 
-Press `Ctrl+Shift+P` and run:
-```
-Launcher: Open Settings
-```
-
-Or manually edit your `settings.json`:
-```
-Ctrl+Shift+P > Preferences: Open Settings (JSON)
-```
-
-### 2. Add Your First Shortcut
-
-Add this to your settings:
-
-```json
-{
-  "launcher.shortcuts": [
-    {
-      "id": "open-browser",
-      "label": "Open in Browser",
-      "icon": "browser",
-      "program": "",
-      "args": ["${file}"]
-    }
-  ]
-}
-```
-
-This creates a shortcut to open the current file in your default browser.
-
-### 3. Use the Shortcut
-
-**Method 1: Quick Pick**
+### 2. Try the Quick Pick
 - Press `Ctrl+Alt+L` (or `Cmd+Alt+L` on Mac)
-- Select "Open in Browser"
+- See all available shortcuts in a searchable list
 
-**Method 2: Tree View**
-- Look for "Shortcuts" in the Explorer sidebar
-- Click on "Open in Browser"
+### 3. Use Play Buttons
+- Click the **▶️ play button** next to any shortcut to run it
+- No more accidental clicks - only play buttons execute shortcuts!
 
-**Method 3: Command Palette**
-- Press `Ctrl+Shift+P`
-- Type "Launcher: Open Shortcuts"
-- Select your shortcut
+## 🎨 Understanding Color Groups
 
-## Common Use Cases
+Shortcuts are automatically color-coded by category:
 
-### Open Folder in File Explorer
+| Color | Category | Examples |
+|:---:|:---|:---|
+| 🧩 Orange | Extension Dev | Compile, Package, Publish |
+| 🔐 Red | SSH/Remote | SSH connections, SCP transfers |
+| 🟢 Green | Node.js | npm, yarn, webpack |
+| 🔵 Cyan | Go | go run, go build |
+| 🐍 Blue | Python | python, pip, django |
+| 🐳 Bright Cyan | Docker | docker, kubernetes |
+| 💻 Bright Blue | Terminal | cmd, powershell, bash |
+| 🌐 Green | Browser | chrome, firefox, edge |
 
-**Windows:**
-```json
-{
-  "id": "open-explorer",
-  "label": "Open in Explorer",
-  "icon": "folder-opened",
-  "program": "explorer.exe",
-  "args": ["${workspaceFolder}"],
-  "platform": "win"
-}
-```
+## ⚡ Auto-Discovered Shortcuts
 
-**macOS:**
-```json
-{
-  "id": "open-finder",
-  "label": "Open in Finder",
-  "icon": "folder-opened",
-  "program": "open",
-  "args": ["${workspaceFolder}"],
-  "platform": "mac"
-}
-```
+Launcher Plus automatically detects and creates shortcuts based on your project:
 
-**Linux:**
-```json
-{
-  "id": "open-files",
-  "label": "Open in Files",
-  "icon": "folder-opened",
-  "program": "xdg-open",
-  "args": ["${workspaceFolder}"],
-  "platform": "linux"
-}
-```
+### For VS Code Extension Projects
+- 🔧 **Compile Extension** - `npm run compile`
+- 📦 **Package Extension** - `npm run package`
+- 🚀 **Publish to OpenVSX** - `npm run publish:ovsx`
+- 🏪 **Publish to Marketplace** - `npm run publish:vsce`
 
-### Open Terminal in Current Directory
+### For Node.js Projects
+- 📦 **npm run dev** - Development server
+- 🔨 **npm run build** - Production build
+- 🧪 **npm run test** - Run tests
 
-```json
-{
-  "id": "open-terminal",
-  "label": "Open Terminal Here",
-  "icon": "terminal",
-  "program": "wt.exe",
-  "args": ["-d", "${workspaceFolder}"]
-}
-```
+### For Go Projects
+- 🚀 **go run main.go** - Run Go application
+- 🔨 **go build** - Build executable
+- 🧪 **go test** - Run tests
 
-### Run npm Commands
+### For Docker Projects
+- 🐳 **docker-compose up** - Start containers
+- 🛑 **docker-compose down** - Stop containers
 
-```json
-{
-  "id": "npm-install",
-  "label": "npm install",
-  "icon": "package",
-  "program": "npm",
-  "args": ["install"],
-  "cwd": "${workspaceFolder}"
-}
-```
+## 🔧 Basic Configuration
 
-### Open Documentation
+### Global vs Workspace Shortcuts
+
+**Global Shortcuts** (Recommended):
+- Available in ALL workspaces
+- Location: `%APPDATA%\Code\User\launcher-putra.json` (Windows)
+- Auto-created with 100+ default shortcuts
+
+**Workspace Shortcuts** (Project-specific):
+- Only for current project
+- Location: `.vscode/launcher-putra.json`
+
+### Opening Settings Files
+
+1. Click the `{}` icon in Launcher Plus panel
+2. Choose **Global** or **Workspace**
+3. File opens automatically (created if doesn't exist)
+
+### Adding Custom Shortcuts
 
 ```json
 {
-  "id": "open-docs",
-  "label": "Open Documentation",
-  "icon": "book",
-  "program": "",
-  "args": ["https://your-docs-url.com"]
+  "id": "my-shortcut",
+  "label": "My Custom Shortcut",
+  "program": "notepad.exe",
+  "args": ["${file}"],
+  "icon": "edit"
 }
 ```
 
-## Advanced Features
+## 🎯 Common Use Cases
 
-### Sequence Execution
+### 1. Quick File Operations
+- **Explorer (Downloads)** - Open Downloads folder
+- **Explorer (Documents)** - Open Documents folder
 
-Run multiple commands in order:
+### 2. Development Workflow
+- **Chrome** - Open browser for testing
+- **Git Status** - Check repository status
+- **Terminal** - Open command prompt
 
-```json
-{
-  "id": "morning-routine",
-  "label": "Morning Startup",
-  "icon": "rocket",
-  "sequence": [
-    {"program": "chrome.exe", "args": ["https://mail.google.com"]},
-    {"program": "slack.exe"},
-    {"program": "code", "args": ["C:\\Projects"]}
-  ]
-}
-```
+### 3. SSH Connections
+- **SSH to localhost** - Connect to local server
+- **SCP Upload** - Transfer files via SCP
 
-### Profile-Based Shortcuts
+### 4. Build & Deploy
+- **npm run build** - Build project
+- **Package Extension** - Create .vsix file
+- **Publish to OpenVSX** - Deploy extension
 
-Create shortcuts for different contexts:
+## 🔍 Tips & Tricks
 
-```json
-{
-  "launcher.shortcuts": [
-    {
-      "id": "dev-tools",
-      "label": "Development Tools",
-      "profile": "dev",
-      "sequence": [
-        {"program": "docker-compose", "args": ["up"], "cwd": "${workspaceFolder}"}
-      ]
-    },
-    {
-      "id": "prod-tools",
-      "label": "Production Tools",
-      "profile": "prod",
-      "sequence": [
-        {"program": "kubectl", "args": ["get", "pods"]}
-      ]
-    }
-  ],
-  "launcher.activeProfile": "dev"
-}
-```
+### 1. Search Shortcuts
+- Use `Ctrl+Alt+L` and type to filter shortcuts
+- Search by name, category, or command
 
-Switch profiles:
-```
-Ctrl+Shift+P > Launcher: Set Active Profile
-```
+### 2. Organize by Profile
+- Set active profile: `Launcher Plus: Set Active Profile`
+- Filter shortcuts by context (dev, ops, test)
 
-### Using the Visual Editor
+### 3. Import/Export
+- Share configurations between machines
+- `Launcher Plus: Export Shortcuts (JSON)`
+- `Launcher Plus: Import Shortcuts (JSON)`
 
-1. Press `Ctrl+Shift+P`
-2. Run `Launcher: Open Shortcut Editor`
-3. Edit your shortcuts in the visual interface
-4. Click "Save" to apply changes
+### 4. Validation & Cleanup
+- `Launcher Plus: Validate Shortcuts` - Check for broken paths
+- `Launcher Plus: Clean Invalid Shortcuts` - Remove broken ones
 
-### Import/Export
+## 🆘 Troubleshooting
 
-**Export your shortcuts:**
-```
-Ctrl+Shift+P > Launcher: Export Shortcuts (JSON)
-```
+### Shortcuts Not Appearing?
+1. Check if `launcher.enableAutoDiscover` is enabled
+2. Reload window: `Developer: Reload Window`
+3. Rescan: Click refresh button in Launcher Plus panel
 
-**Import shortcuts:**
-```
-Ctrl+Shift+P > Launcher: Import Shortcuts (JSON)
-```
+### Program Not Found Error?
+1. Check if program is installed and in PATH
+2. Use full path in shortcut configuration
+3. Run `Launcher Plus: Validate Shortcuts` for diagnosis
 
-## Tips & Tricks
+### Extension Development Shortcuts Missing?
+1. Ensure `package.json` has `engines.vscode` field
+2. Check for `vsce` or `ovsx` in devDependencies
+3. Verify scripts exist: `compile`, `package`, `publish:ovsx`
 
-### 1. Use Icons
-Make shortcuts easier to identify with icons:
-```json
-{
-  "icon": "browser"  // VS Code icon name
-}
-```
+## 🎉 You're Ready!
 
-Common icons: `browser`, `terminal`, `folder`, `file`, `rocket`, `gear`, `book`, `package`
+That's it! You now have:
+- ✅ 100+ auto-discovered shortcuts
+- ✅ Smart color grouping
+- ✅ Play button interface
+- ✅ Extension development workflow
+- ✅ Cross-platform compatibility
 
-### 2. Platform-Specific Shortcuts
-Create shortcuts that only appear on specific platforms:
-```json
-{
-  "platform": "win"  // Only on Windows
-}
-```
-
-### 3. Context Variables
-Use variables for dynamic paths:
-- `${file}` - Current file
-- `${workspaceFolder}` - Project root
-- `${relativeFile}` - Relative path
-- `${lineNumber}` - Current line
-- `${selectedText}` - Selected text
-
-### 4. Custom Keybindings
-Add keyboard shortcuts in `keybindings.json`:
-```json
-{
-  "key": "ctrl+alt+b",
-  "command": "launcher.run",
-  "args": "open-browser"
-}
-```
-
-### 5. Auto-Discovery
-Enable automatic detection of installed apps:
-```json
-{
-  "launcher.enableAutoDiscover": true
-}
-```
-
-This automatically adds shortcuts for Chrome, Office, Git Bash, and more!
-
-## Troubleshooting
-
-### Shortcut Doesn't Appear
-- Check if `platform` matches your OS
-- Verify `when` condition is met
-- Check if `profile` matches active profile
-- Refresh tree view: `Launcher: Rescan Auto-Discovered Apps`
-
-### Program Not Found
-- Use absolute paths: `C:\\Program Files\\...`
-- Check if program is in PATH
-- Verify program name and location
-
-### Variables Not Working
-- Ensure file is open for `${file}`
-- Check workspace is open for `${workspaceFolder}`
-- Variables are case-sensitive
-
-## Next Steps
-
-- Read the full [README.md](README.md) for detailed documentation
-- Check [examples/](examples/) folder for more configurations
-- Join discussions on [GitHub](https://github.com/PutraAdiJaya/any-launcher-plus)
-- Report issues or request features
-
-## Getting Help
-
-- **Documentation**: See README.md
-- **Examples**: Check examples/ folder
-- **Issues**: https://github.com/PutraAdiJaya/any-launcher-plus/issues
-- **Discussions**: https://github.com/PutraAdiJaya/any-launcher-plus/discussions
+**Happy coding!** 🚀
 
 ---
 
-Happy launching! 🚀
+**Need more help?** Check the [full README](README.md) or [report issues](https://github.com/PutraAdiJaya/any-launcher-plus/issues).

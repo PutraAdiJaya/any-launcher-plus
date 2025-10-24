@@ -704,14 +704,19 @@ async function runShortcut(s: Shortcut): Promise<void> {
               windowsVerbatimArguments: true,
             });
             fallbackChild.unref();
-            vscode.window.showInformationMessage(`✅ ${s.label} dijalankan menggunakan fallback (cmd start)`);
+            console.log(`[Launcher] ✅ ${s.label} launched using fallback (cmd start)`);
             return;
           } catch (fallbackErr) {
             output.appendLine(`[Launcher] ❌ Fallback failed: ${String(fallbackErr)}`);
           }
         }
-        // Otherwise, report the error
-        vscode.window.showErrorMessage(`❌ Gagal menjalankan "${s.label}": ${err?.message ?? String(err)}`);
+        // Only show error if it's "not found" related
+        const errorMsg = err?.message ?? String(err);
+        if (errorMsg.includes('ENOENT') || errorMsg.includes('not found') || errorMsg.includes('cannot find')) {
+          vscode.window.showErrorMessage(`❌ Program tidak ditemukan: "${s.label}"`);
+        } else {
+          console.log(`[Launcher] Error (suppressed): ${errorMsg}`);
+        }
       });
 
       child.on('spawn', () => {
@@ -720,17 +725,9 @@ async function runShortcut(s: Shortcut): Promise<void> {
         output.appendLine(`[Launcher] Full command that succeeded: ${finalProgram} ${finalArgs.join(' ')}`);
         console.log(`[Launcher] Process spawned: ${finalProgram} ${finalArgs.join(' ')} | PID: ${child.pid}`);
 
-        // Show user-friendly message with command details
-        vscode.window
-          .showInformationMessage(
-            `✅ ${s.label} launched (PID: ${child.pid})\nCommand: ${finalProgram} ${finalArgs.join(' ')}`,
-            'Show Debug Log'
-          )
-          .then((selection) => {
-            if (selection === 'Show Debug Log') {
-              output.show();
-            }
-          });
+        // Disable success notifications - only log to console
+        console.log(`[Launcher] ✅ ${s.label} launched (PID: ${child.pid})`);
+        output.appendLine(`[Launcher] ✅ ${s.label} launched successfully`);
 
         // Skip extended monitoring for cmd_start since child is the shell, not the GUI app
         if (launchStrategy === 'cmd_start') {
@@ -742,18 +739,9 @@ async function runShortcut(s: Shortcut): Promise<void> {
           if (!processExited) {
             output.appendLine(`[Launcher] Process ${child.pid} still running after 1s (good sign)`);
 
-            // Additional check for Electron apps to ensure proper launch
+            // Additional check for Electron apps - only log, no notifications
             if (isElectronApp) {
-              vscode.window
-                .showInformationMessage(
-                  `✅ ${s.label} launched successfully.\nIf the app doesn't appear, please check the debug log.`,
-                  'Show Debug Log'
-                )
-                .then((selection) => {
-                  if (selection === 'Show Debug Log') {
-                    output.show();
-                  }
-                });
+              console.log(`[Launcher] ✅ ${s.label} Electron app launched successfully`);
             }
           } else {
             // For Electron apps, a quick exit with code 0 often means an existing instance handled the request.
@@ -764,7 +752,7 @@ async function runShortcut(s: Shortcut): Promise<void> {
               output.appendLine(
                 `[Launcher] Electron app exited quickly with code ${lastExitCode} (existing instance). Treating as success.`
               );
-              vscode.window.showInformationMessage(`✅ ${s.label} signaled existing instance.`);
+              console.log(`[Launcher] ✅ ${s.label} signaled existing instance.`);
             } else {
               output.appendLine(`[Launcher] ⚠️ Process ${child.pid} exited quickly (potential issue)`);
               let errorMessage = `⚠️ ${s.label} (PID: ${child.pid}) exited quickly.`;
@@ -810,7 +798,7 @@ async function runShortcut(s: Shortcut): Promise<void> {
               try {
                 fb.unref();
               } catch {}
-              vscode.window.showInformationMessage(`✅ ${s.label} dijalankan menggunakan fallback (cmd start)`);
+              console.log(`[Launcher] ✅ ${s.label} launched using fallback (cmd start)`);
               return; // Don't treat as error further
             } catch (fbErr) {
               output.appendLine(`[Launcher] ❌ Fallback after quick exit failed: ${String(fbErr)}`);
@@ -995,9 +983,433 @@ class ShortcutItem extends vscode.TreeItem {
     super(s.label || s.id, vscode.TreeItemCollapsibleState.None);
     this.contextValue = 'shortcutItem';
     this.tooltip = `${s.program || '(default app)'} ${(s.args || []).join(' ')}`;
-    // pass the full Shortcut object so commands can run both configured and auto-discovered shortcuts
-    this.command = { command: 'launcher.run', title: 'Run Shortcut', arguments: [s] };
-    this.iconPath = resolveIcon(s.icon);
+
+    // Remove click event - only play button will trigger execution
+    // this.command = { command: 'launcher.run', title: 'Run Shortcut', arguments: [s] };
+
+    // Use group-based icon with color
+    this.iconPath = this.getGroupIcon(s);
+
+    // Keep description clean - only show if shortcut has args or special info
+    if (s.args && s.args.length > 0) {
+      this.description = s.args.join(' ');
+    }
+  }
+
+  private getGroupIcon(s: Shortcut): vscode.ThemeIcon | vscode.Uri {
+    // If shortcut has custom icon, use it but still apply group color
+    const group = this.detectGroup(s);
+    const groupColor = this.getGroupColor(group);
+
+    if (s.icon) {
+      const customIcon = resolveIcon(s.icon);
+      // If it's a ThemeIcon, apply group color
+      if (customIcon instanceof vscode.ThemeIcon) {
+        return new vscode.ThemeIcon(customIcon.id, groupColor);
+      }
+      return customIcon;
+    }
+
+    // Use group-specific icon and color
+    const iconName = this.getGroupIconName(group);
+    return new vscode.ThemeIcon(iconName, groupColor);
+  }
+
+  private detectGroup(s: Shortcut): string {
+    const id = s.id.toLowerCase();
+    const label = (s.label || '').toLowerCase();
+    const program = (s.program || '').toLowerCase();
+
+    // SSH/Remote - highest priority for SSH connections
+    if (
+      id.includes('ssh') ||
+      id.includes('scp') ||
+      id.includes('sftp') ||
+      label.includes('ssh') ||
+      label.includes('scp') ||
+      label.includes('sftp') ||
+      label.includes('remote') ||
+      program.includes('ssh') ||
+      id.includes('putty') ||
+      program.includes('putty')
+    ) {
+      return 'ssh';
+    }
+
+    // VS Code Extension Development - highest priority for extension projects
+    if (
+      id.includes('ext-') ||
+      id.includes('extension') ||
+      label.includes('extension') ||
+      label.includes('vsix') ||
+      label.includes('openvsx') ||
+      label.includes('marketplace') ||
+      id.includes('vsce') ||
+      id.includes('ovsx')
+    ) {
+      return 'extension';
+    }
+
+    // Node.js/JavaScript build tools
+    if (
+      id.includes('npm-') ||
+      id.includes('yarn-') ||
+      id.includes('node-') ||
+      label.includes('npm run') ||
+      label.includes('yarn') ||
+      label.includes('node ') ||
+      id.includes('webpack') ||
+      id.includes('vite') ||
+      id.includes('rollup')
+    ) {
+      return 'nodejs';
+    }
+
+    // Go build tools
+    if (
+      id.includes('go-') ||
+      label.includes('go run') ||
+      label.includes('go build') ||
+      label.includes('go test') ||
+      program.includes('go.exe') ||
+      program === 'go'
+    ) {
+      return 'golang';
+    }
+
+    // Rust build tools
+    if (
+      id.includes('cargo-') ||
+      label.includes('cargo') ||
+      program.includes('cargo') ||
+      id.includes('rust') ||
+      label.includes('rust')
+    ) {
+      return 'rust';
+    }
+
+    // .NET build tools
+    if (
+      id.includes('dotnet-') ||
+      label.includes('dotnet') ||
+      program.includes('dotnet') ||
+      id.includes('csharp') ||
+      label.includes('c#') ||
+      id.includes('msbuild')
+    ) {
+      return 'dotnet';
+    }
+
+    // Java build tools
+    if (
+      id.includes('mvn-') ||
+      id.includes('gradle-') ||
+      label.includes('maven') ||
+      label.includes('gradle') ||
+      program.includes('mvn') ||
+      program.includes('gradle') ||
+      id.includes('java') ||
+      label.includes('java')
+    ) {
+      return 'java';
+    }
+
+    // Python tools
+    if (
+      id.includes('python-') ||
+      id.includes('pip-') ||
+      label.includes('python') ||
+      label.includes('pip ') ||
+      program.includes('python') ||
+      id.includes('django') ||
+      label.includes('django') ||
+      id.includes('flask')
+    ) {
+      return 'python';
+    }
+
+    // Docker/Container tools
+    if (
+      id.includes('docker') ||
+      id.includes('container') ||
+      id.includes('compose') ||
+      label.includes('docker') ||
+      label.includes('container') ||
+      program.includes('docker') ||
+      id.includes('kubernetes') ||
+      id.includes('k8s') ||
+      label.includes('kubectl')
+    ) {
+      return 'container';
+    }
+
+    // Database tools
+    if (
+      id.includes('mysql') ||
+      id.includes('postgres') ||
+      id.includes('mongodb') ||
+      id.includes('redis') ||
+      id.includes('sqlite') ||
+      label.includes('database') ||
+      label.includes('mysql') ||
+      label.includes('postgres') ||
+      program.includes('mysql') ||
+      id.includes('dbeaver') ||
+      program.includes('dbeaver')
+    ) {
+      return 'database';
+    }
+
+    // Git/Version Control
+    if (
+      id.includes('git') ||
+      label.includes('git') ||
+      program.includes('git') ||
+      id.includes('github') ||
+      id.includes('gitlab') ||
+      program.includes('sourcetree') ||
+      label.includes('source control') ||
+      label.includes('version control')
+    ) {
+      return 'git';
+    }
+
+    // Terminal/Shell - check for terminal programs
+    if (
+      id.includes('terminal') ||
+      id.includes('cmd') ||
+      id.includes('powershell') ||
+      id.includes('bash') ||
+      id.includes('wsl') ||
+      id.includes('ubuntu') ||
+      id.includes('debian') ||
+      program.includes('cmd.exe') ||
+      program.includes('powershell.exe') ||
+      program.includes('wsl.exe') ||
+      program.includes('bash.exe') ||
+      label.includes('terminal') ||
+      label.includes('command') ||
+      label.includes('shell')
+    ) {
+      return 'terminal';
+    }
+
+    // Browser - check for browser programs
+    if (
+      id.includes('chrome') ||
+      id.includes('firefox') ||
+      id.includes('edge') ||
+      id.includes('browser') ||
+      program.includes('chrome.exe') ||
+      program.includes('firefox.exe') ||
+      program.includes('msedge.exe') ||
+      program.includes('opera.exe') ||
+      label.includes('browser') ||
+      label.includes('chrome') ||
+      label.includes('firefox') ||
+      label.includes('edge')
+    ) {
+      return 'browser';
+    }
+
+    // Code Editors - check for editor programs
+    if (
+      id.includes('code') ||
+      id.includes('editor') ||
+      id.includes('notepad') ||
+      id.includes('sublime') ||
+      program.includes('code.exe') ||
+      program.includes('notepad.exe') ||
+      program.includes('sublime') ||
+      program.includes('atom.exe') ||
+      label.includes('code') ||
+      label.includes('editor') ||
+      label.includes('notepad') ||
+      label.includes('sublime') ||
+      id.includes('vim') ||
+      id.includes('emacs') ||
+      program.includes('vim') ||
+      program.includes('emacs')
+    ) {
+      return 'editor';
+    }
+
+    // File Explorer - check for file management
+    if (
+      id.includes('explorer') ||
+      id.includes('folder') ||
+      id.includes('file') ||
+      id.includes('downloads') ||
+      id.includes('documents') ||
+      id.includes('desktop') ||
+      program.includes('explorer.exe') ||
+      label.includes('explorer') ||
+      label.includes('folder') ||
+      label.includes('downloads') ||
+      label.includes('documents') ||
+      label.includes('pictures')
+    ) {
+      return 'file';
+    }
+
+    // Media/Graphics tools
+    if (
+      id.includes('photoshop') ||
+      id.includes('gimp') ||
+      id.includes('vlc') ||
+      id.includes('media') ||
+      label.includes('photoshop') ||
+      label.includes('gimp') ||
+      label.includes('vlc') ||
+      program.includes('photoshop') ||
+      program.includes('gimp') ||
+      program.includes('vlc') ||
+      id.includes('paint') ||
+      label.includes('paint')
+    ) {
+      return 'media';
+    }
+
+    // Communication tools
+    if (
+      id.includes('discord') ||
+      id.includes('slack') ||
+      id.includes('teams') ||
+      id.includes('zoom') ||
+      label.includes('discord') ||
+      label.includes('slack') ||
+      label.includes('teams') ||
+      program.includes('discord') ||
+      program.includes('slack') ||
+      program.includes('teams')
+    ) {
+      return 'communication';
+    }
+
+    // System Tools - check for system utilities
+    if (
+      id.includes('taskmgr') ||
+      id.includes('regedit') ||
+      id.includes('control') ||
+      id.includes('calc') ||
+      id.includes('mmc') ||
+      id.includes('services') ||
+      program.includes('taskmgr.exe') ||
+      program.includes('regedit.exe') ||
+      program.includes('control.exe') ||
+      program.includes('calc.exe') ||
+      label.includes('task manager') ||
+      label.includes('registry') ||
+      label.includes('control') ||
+      id.includes('device') ||
+      label.includes('device manager')
+    ) {
+      return 'system';
+    }
+
+    // Generic build tools (fallback)
+    if (
+      id.includes('make') ||
+      id.includes('build') ||
+      id.includes('compile') ||
+      label.includes('build') ||
+      label.includes('compile') ||
+      label.includes('make')
+    ) {
+      return 'build';
+    }
+
+    return 'default';
+  }
+
+  private getGroupColor(group: string): vscode.ThemeColor {
+    switch (group) {
+      case 'extension':
+        return new vscode.ThemeColor('testing.iconQueued'); // Orange for VS Code Extensions
+      case 'ssh':
+        return new vscode.ThemeColor('terminal.ansiRed'); // Bright Red for SSH
+      case 'nodejs':
+        return new vscode.ThemeColor('terminal.ansiGreen'); // Green for Node.js
+      case 'golang':
+        return new vscode.ThemeColor('terminal.ansiCyan'); // Cyan for Go
+      case 'rust':
+        return new vscode.ThemeColor('testing.iconFailed'); // Orange for Rust
+      case 'dotnet':
+        return new vscode.ThemeColor('terminal.ansiMagenta'); // Purple for .NET
+      case 'java':
+        return new vscode.ThemeColor('terminal.ansiYellow'); // Yellow for Java
+      case 'python':
+        return new vscode.ThemeColor('terminal.ansiBlue'); // Blue for Python
+      case 'container':
+        return new vscode.ThemeColor('terminal.ansiBrightCyan'); // Bright Cyan for Docker
+      case 'database':
+        return new vscode.ThemeColor('terminal.ansiBrightMagenta'); // Bright Purple for DB
+      case 'git':
+        return new vscode.ThemeColor('terminal.ansiBrightYellow'); // Bright Yellow for Git
+      case 'terminal':
+        return new vscode.ThemeColor('terminal.ansiBrightBlue'); // Bright Blue for Terminal
+      case 'browser':
+        return new vscode.ThemeColor('testing.iconPassed'); // Green for Browser
+      case 'editor':
+        return new vscode.ThemeColor('terminal.ansiBrightMagenta'); // Bright Purple for Editor
+      case 'file':
+        return new vscode.ThemeColor('terminal.ansiBrightYellow'); // Bright Yellow for Files
+      case 'media':
+        return new vscode.ThemeColor('terminal.ansiBrightRed'); // Bright Red for Media
+      case 'communication':
+        return new vscode.ThemeColor('terminal.ansiBrightGreen'); // Bright Green for Chat
+      case 'system':
+        return new vscode.ThemeColor('terminal.ansiWhite'); // White for System
+      case 'build':
+        return new vscode.ThemeColor('testing.iconQueued'); // Orange for Generic Build
+      default:
+        return new vscode.ThemeColor('foreground'); // Default Gray
+    }
+  }
+
+  private getGroupIconName(group: string): string {
+    switch (group) {
+      case 'extension':
+        return 'extensions'; // Extensions icon for VS Code Extension Development
+      case 'ssh':
+        return 'lock'; // Lock icon for SSH
+      case 'nodejs':
+        return 'symbol-method'; // Method icon for Node.js
+      case 'golang':
+        return 'go-to-file'; // Go icon for Golang
+      case 'rust':
+        return 'gear'; // Gear icon for Rust
+      case 'dotnet':
+        return 'symbol-class'; // Class icon for .NET
+      case 'java':
+        return 'symbol-object'; // Object icon for Java
+      case 'python':
+        return 'symbol-snake'; // Snake-like icon for Python
+      case 'container':
+        return 'package'; // Package icon for Docker
+      case 'database':
+        return 'database'; // Database icon
+      case 'git':
+        return 'source-control'; // Source control icon for Git
+      case 'terminal':
+        return 'terminal'; // Terminal icon
+      case 'browser':
+        return 'browser'; // Browser icon
+      case 'editor':
+        return 'code'; // Code icon for editors
+      case 'file':
+        return 'folder-opened'; // Folder icon for files
+      case 'media':
+        return 'play'; // Play icon for media
+      case 'communication':
+        return 'comment-discussion'; // Chat icon for communication
+      case 'system':
+        return 'settings-gear'; // Settings gear for system
+      case 'build':
+        return 'tools'; // Tools icon for generic build
+      default:
+        return 'rocket'; // Default rocket icon
+    }
   }
 }
 
@@ -1148,6 +1560,16 @@ function autoDiscoveredShortcuts(): Shortcut[] {
     if (fs.existsSync(path.join(workspaceFolder, 'package.json'))) {
       try {
         const packageJson = JSON.parse(fs.readFileSync(path.join(workspaceFolder, 'package.json'), 'utf8'));
+
+        // Check if this is a VS Code extension project
+        const isVSCodeExtension =
+          packageJson.engines?.vscode ||
+          packageJson.devDependencies?.vsce ||
+          packageJson.devDependencies?.ovsx ||
+          packageJson.scripts?.package ||
+          packageJson.scripts?.['publish:ovsx'] ||
+          packageJson.scripts?.['publish:vsce'];
+
         if (packageJson.scripts) {
           // Common npm scripts
           const commonScripts = ['serve', 'dev', 'start', 'build', 'test', 'lint'];
@@ -1160,6 +1582,108 @@ function autoDiscoveredShortcuts(): Shortcut[] {
                 args: plat === 'win32' ? ['/c', 'npm', 'run', script] : ['-c', `npm run ${script}`],
                 cwd: workspaceFolder,
                 icon: 'run',
+              });
+            }
+          }
+
+          // VS Code Extension Development shortcuts
+          if (isVSCodeExtension) {
+            // Compile TypeScript
+            if (packageJson.scripts.compile) {
+              list.push({
+                id: 'auto-ext-compile',
+                label: '🔧 Compile Extension',
+                program: plat === 'win32' ? 'cmd' : 'sh',
+                args: plat === 'win32' ? ['/c', 'npm', 'run', 'compile'] : ['-c', 'npm run compile'],
+                cwd: workspaceFolder,
+                icon: 'gear',
+              });
+            }
+
+            // Package extension
+            if (packageJson.scripts.package) {
+              list.push({
+                id: 'auto-ext-package',
+                label: '📦 Package Extension (.vsix)',
+                program: plat === 'win32' ? 'cmd' : 'sh',
+                args: plat === 'win32' ? ['/c', 'npm', 'run', 'package'] : ['-c', 'npm run package'],
+                cwd: workspaceFolder,
+                icon: 'package',
+              });
+            }
+
+            // Publish to OpenVSX
+            if (packageJson.scripts['publish:ovsx']) {
+              list.push({
+                id: 'auto-ext-publish-ovsx',
+                label: '🚀 Publish to OpenVSX',
+                program: plat === 'win32' ? 'cmd' : 'sh',
+                args: plat === 'win32' ? ['/c', 'npm', 'run', 'publish:ovsx'] : ['-c', 'npm run publish:ovsx'],
+                cwd: workspaceFolder,
+                icon: 'cloud-upload',
+              });
+            }
+
+            // Publish to VS Code Marketplace
+            if (packageJson.scripts['publish:vsce']) {
+              list.push({
+                id: 'auto-ext-publish-vsce',
+                label: '🏪 Publish to VS Code Marketplace',
+                program: plat === 'win32' ? 'cmd' : 'sh',
+                args: plat === 'win32' ? ['/c', 'npm', 'run', 'publish:vsce'] : ['-c', 'npm run publish:vsce'],
+                cwd: workspaceFolder,
+                icon: 'extensions',
+              });
+            }
+
+            // Watch mode for development
+            if (packageJson.scripts.watch) {
+              list.push({
+                id: 'auto-ext-watch',
+                label: '👀 Watch & Compile',
+                program: plat === 'win32' ? 'cmd' : 'sh',
+                args: plat === 'win32' ? ['/c', 'npm', 'run', 'watch'] : ['-c', 'npm run watch'],
+                cwd: workspaceFolder,
+                icon: 'eye',
+              });
+            }
+
+            // Clean build
+            if (packageJson.scripts.clean) {
+              list.push({
+                id: 'auto-ext-clean',
+                label: '🧹 Clean Build',
+                program: plat === 'win32' ? 'cmd' : 'sh',
+                args: plat === 'win32' ? ['/c', 'npm', 'run', 'clean'] : ['-c', 'npm run clean'],
+                cwd: workspaceFolder,
+                icon: 'trash',
+              });
+            }
+
+            // Lint extension code
+            if (packageJson.scripts.lint) {
+              list.push({
+                id: 'auto-ext-lint',
+                label: '🔍 Lint Extension Code',
+                program: plat === 'win32' ? 'cmd' : 'sh',
+                args: plat === 'win32' ? ['/c', 'npm', 'run', 'lint'] : ['-c', 'npm run lint'],
+                cwd: workspaceFolder,
+                icon: 'search',
+              });
+            }
+
+            // Format code
+            if (packageJson.scripts.format || packageJson.scripts['format:check']) {
+              list.push({
+                id: 'auto-ext-format',
+                label: '✨ Format Code',
+                program: plat === 'win32' ? 'cmd' : 'sh',
+                args:
+                  plat === 'win32'
+                    ? ['/c', 'npm', 'run', packageJson.scripts.format ? 'format' : 'format:check']
+                    : ['-c', `npm run ${packageJson.scripts.format ? 'format' : 'format:check'}`],
+                cwd: workspaceFolder,
+                icon: 'symbol-color',
               });
             }
           }
@@ -2262,10 +2786,15 @@ function getDefaultShortcuts(): Shortcut[] {
 async function initializeGlobalShortcuts(context: vscode.ExtensionContext) {
   const globalPath = getGlobalShortcutsPath();
 
+  // Check current extension version
+  const currentVersion = context.extension.packageJSON.version;
+  const lastVersion = context.globalState.get<string>('launcher.lastVersion', '0.0.0');
+
   // ALWAYS check if file exists - recreate if deleted
   const fileExists = fs.existsSync(globalPath);
+  const isVersionUpdate = currentVersion !== lastVersion;
 
-  if (!fileExists) {
+  if (!fileExists || isVersionUpdate) {
     console.log('[Launcher] 📁 Global shortcuts file not found, creating from template...');
     output.appendLine('[Launcher] Creating/restoring global shortcuts file...');
 
@@ -2330,6 +2859,22 @@ export function activate(context: vscode.ExtensionContext) {
   const provider = new ShortcutsProvider();
   const view = vscode.window.createTreeView('launcher.shortcutsView', { treeDataProvider: provider });
   context.subscriptions.push(view);
+
+  // Play command for inline button
+  const playCmd = vscode.commands.registerCommand('launcher.playShortcut', async (item: ShortcutItem) => {
+    if (!item || !item.s) {
+      vscode.window.showErrorMessage('Invalid shortcut item.');
+      return;
+    }
+
+    const target = item.s;
+    if (target.sequence && target.sequence.length) {
+      await runSequence(target.sequence, getConfigShortcuts(), target.sequenceMode || 'serial');
+    } else {
+      await runShortcut(target);
+    }
+    pushRecent(context, target);
+  });
 
   const runCmd = vscode.commands.registerCommand('launcher.run', async (id?: string) => {
     // id can be either a Shortcut object (from tree) or a string id
@@ -2950,7 +3495,7 @@ export function activate(context: vscode.ExtensionContext) {
         programVerificationCache.clear();
         autoDiscoveryCache.lastUpdated = 0;
         provider.refresh();
-        vscode.window.showInformationMessage('✅ Cache dibersihkan. Auto-discovery shortcuts akan di-refresh.');
+        console.log('[Launcher] ✅ Cache cleared. Auto-discovery shortcuts will refresh.');
       } else if (action === 'Lihat Detail') {
         // Show detailed report
         const panel = vscode.window.createWebviewPanel(
@@ -3030,6 +3575,7 @@ export function activate(context: vscode.ExtensionContext) {
   sb.command = 'launcher.openQuickPick';
   sb.show();
   context.subscriptions.push(
+    playCmd,
     runCmd,
     qpCmd,
     openSettingsCmd,

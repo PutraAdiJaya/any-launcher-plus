@@ -3,7 +3,7 @@
   "displayName": "Launcher Plus (Shortcuts)",
   "description": "Shortcut list to launch apps, scripts, or open docs from VS Code / Cursor / Windsurf. Tree view, QuickPick, variables, recent items.",
   "publisher": "PutraAdiJaya",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/PutraAdiJaya/any-launcher-plus.git"
@@ -42,6 +42,11 @@
         "title": "Launcher Plus: Run Shortcut by ID",
         "category": "Launcher Plus",
         "enablement": "true"
+      },
+      {
+        "command": "launcher.playShortcut",
+        "title": "Play Shortcut",
+        "icon": "$(play)"
       },
       {
         "command": "launcher.openSettings",
@@ -210,6 +215,13 @@
         {
           "command": "launcher.openQuickPick",
           "group": "navigation@9"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "launcher.playShortcut",
+          "when": "view == launcher.shortcutsView && viewItem == shortcutItem",
+          "group": "inline"
         }
       ]
     },

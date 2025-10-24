@@ -1,232 +1,324 @@
-# Deployment Checklist
+# 🚀 Deployment Guide - Launcher Plus
 
-This document outlines the steps to prepare and deploy Launcher Plus to production.
+This guide is for maintainers who need to deploy Launcher Plus to various marketplaces.
 
-## Pre-Release Checklist
+## 📋 Prerequisites
 
-### Code Quality
-- [x] All TypeScript compiles without errors
-- [x] ESLint passes with no errors
-- [x] Code is formatted with Prettier
-- [x] No console.log statements in production code
-- [x] All TODO comments addressed or documented
+### Required Tools
 
-### Testing
-- [ ] Extension loads successfully in VS Code
-- [ ] Extension loads successfully in Cursor
-- [ ] Extension loads successfully in Windsurf
-- [ ] All commands work as expected
-- [ ] Tree view displays correctly
-- [ ] Quick pick interface functions properly
-- [ ] Shortcuts execute correctly
-- [ ] Import/Export functionality works
-- [ ] Profile switching works
-- [ ] Sequence execution (serial and parallel) works
-- [ ] Auto-discovery detects installed apps
-- [ ] Visual editor saves configurations correctly
-- [ ] Task generation creates valid tasks.json
+- **Node.js** (v16+)
+- **npm** (v8+)
+- **vsce** (VS Code Extension Manager)
+- **ovsx** (OpenVSX CLI)
 
-### Documentation
-- [x] README.md is complete and accurate
-- [x] CHANGELOG.md is updated
-- [x] All examples are tested and working
-- [x] API documentation is current
-- [x] Security considerations documented
-- [x] Contributing guidelines are clear
-
-### Package Configuration
-- [x] package.json version is correct
-- [x] Repository URL is set
-- [x] Keywords are relevant
-- [x] Categories are appropriate
-- [x] Icon is included and displays correctly
-- [x] License file exists
-- [x] .vscodeignore excludes unnecessary files
-
-### Platform Testing
-- [ ] Tested on Windows 10/11
-- [ ] Tested on macOS (latest)
-- [ ] Tested on Linux (Ubuntu/Debian)
-- [ ] Path separators work on all platforms
-- [ ] Default app opening works on all platforms
-
-## Release Process
-
-### 1. Version Update
+### Install CLI Tools
 
 ```bash
-# Update version in package.json
-npm version patch  # or minor, or major
+# Install vsce for VS Code Marketplace
+npm install -g vsce
 
-# Update CHANGELOG.md with release notes
-# Add date and version number
+# Install ovsx for OpenVSX
+npm install -g ovsx
 ```
 
-### 2. Final Build
+### Required Tokens
+
+1. **VS Code Marketplace Token**:
+   - Go to [Azure DevOps](https://dev.azure.com/)
+   - Create Personal Access Token with Marketplace scope
+   - Set environment variable: `VSCE_PAT=your_token`
+
+2. **OpenVSX Token**:
+   - Go to [OpenVSX](https://open-vsx.org/)
+   - Sign in with GitHub
+   - Generate Personal Access Token
+   - Set environment variable: `OVSX_TOKEN=your_token`
+
+## 🔧 Pre-Deployment Checklist
+
+### 1. Version Management
+
+- [ ] Update version in `package.json`
+- [ ] Update version badge in `README.md`
+- [ ] Update `CHANGELOG.md` with new features
+- [ ] Update `SECURITY.md` supported versions
+
+### 2. Code Quality
+
+```bash
+# Run all quality checks
+npm run lint
+npm run format:check
+npm run compile
+
+# Fix any issues
+npm run lint:fix
+npm run format
+```
+
+### 3. Testing
+
+- [ ] Test on Windows
+- [ ] Test on macOS  
+- [ ] Test on Linux
+- [ ] Test in VS Code
+- [ ] Test in Cursor
+- [ ] Test in Windsurf
+- [ ] Verify auto-discovery works
+- [ ] Test color grouping
+- [ ] Test play buttons
+
+### 4. Documentation
+
+- [ ] README.md is up to date
+- [ ] QUICKSTART.md reflects current features
+- [ ] Examples are working
+- [ ] Screenshots are current
+
+## 📦 Build Process
+
+### 1. Clean Build
 
 ```bash
 # Clean previous builds
 npm run clean
 
-# Install fresh dependencies
+# Fresh install
 rm -rf node_modules package-lock.json
 npm install
 
-# Run full build pipeline
-npm run lint
-npm run format:check
+# Compile TypeScript
 npm run compile
+```
+
+### 2. Package Extension
+
+```bash
+# Create .vsix package
 npm run package
+
+# Verify package contents
+vsce ls
 ```
 
-### 3. Local Testing
+### 3. Test Package
 
 ```bash
-# Install the packaged extension
-code --install-extension any-launcher-plus-0.1.0.vsix
+# Install locally for testing
+code --install-extension any-launcher-plus-1.1.0.vsix
 
-# Test in a clean VS Code instance
-code --disable-extensions --user-data-dir=/tmp/vscode-test
+# Test in clean VS Code instance
+code --user-data-dir /tmp/vscode-test --extensions-dir /tmp/vscode-ext
 ```
 
-### 4. Create Git Tag
+## 🚀 Deployment Steps
+
+### Option 1: Automated Deployment
 
 ```bash
-# Commit all changes
-git add .
-git commit -m "chore: prepare release v0.1.0"
-
-# Create and push tag
-git tag -a v0.1.0 -m "Release version 0.1.0"
-git push origin main
-git push origin v0.1.0
-```
-
-### 5. GitHub Release
-
-The GitHub Actions workflow will automatically:
-- Build the extension
-- Run tests and linting
-- Create a GitHub release
-- Upload the .vsix file
-- Publish to Open VSX (if token is set)
-- Publish to VS Code Marketplace (if token is set)
-
-### 6. Manual Publishing (if needed)
-
-#### Open VSX Registry
-
-```bash
-# Set token
-export OVSX_TOKEN=your_token_here
-
-# Publish
+# Deploy to both marketplaces
 npm run publish:ovsx
-```
-
-#### VS Code Marketplace
-
-```bash
-# Set token
-export VSCE_PAT=your_token_here
-
-# Publish
 npm run publish:vsce
 ```
 
-## Post-Release
+### Option 2: Manual Deployment
 
-### Verification
+#### Deploy to OpenVSX
+
+```bash
+# Login to OpenVSX
+ovsx create-namespace PutraAdiJaya
+
+# Publish extension
+ovsx publish any-launcher-plus-1.1.0.vsix -p $OVSX_TOKEN
+```
+
+#### Deploy to VS Code Marketplace
+
+```bash
+# Login to VS Code Marketplace
+vsce login PutraAdiJaya
+
+# Publish extension
+vsce publish -p $VSCE_PAT
+```
+
+## 🏷️ Release Management
+
+### 1. Create Git Tag
+
+```bash
+# Create and push tag
+git tag v1.1.0
+git push origin v1.1.0
+```
+
+### 2. GitHub Release
+
+1. Go to [GitHub Releases](https://github.com/PutraAdiJaya/any-launcher-plus/releases)
+2. Click "Create a new release"
+3. Select the tag `v1.1.0`
+4. Title: `Launcher Plus v1.1.0 - Smart Color Grouping`
+5. Description: Copy from `CHANGELOG.md`
+6. Attach the `.vsix` file
+7. Publish release
+
+### 3. Update Documentation
+
+- [ ] Update marketplace descriptions
+- [ ] Update GitHub repository description
+- [ ] Update social media links
+- [ ] Announce on relevant channels
+
+## 📊 Post-Deployment
+
+### 1. Verification
+
 - [ ] Extension appears in VS Code Marketplace
-- [ ] Extension appears in Open VSX Registry
-- [ ] GitHub release is created with .vsix file
-- [ ] Version number is correct everywhere
-- [ ] Download and install from marketplace works
+- [ ] Extension appears in OpenVSX
+- [ ] Installation works from marketplace
+- [ ] All features work in installed version
+- [ ] No errors in extension host
 
-### Communication
-- [ ] Update repository README badges
-- [ ] Announce release on relevant channels
-- [ ] Update documentation site (if applicable)
-- [ ] Respond to user feedback
+### 2. Monitoring
 
-### Monitoring
-- [ ] Check for installation errors
+- [ ] Check marketplace analytics
 - [ ] Monitor GitHub issues
-- [ ] Review marketplace ratings/reviews
-- [ ] Track download statistics
+- [ ] Watch for user feedback
+- [ ] Check error reports
 
-## Rollback Procedure
+### 3. Communication
 
-If critical issues are discovered:
+- [ ] Update README badges
+- [ ] Announce on social media
+- [ ] Notify contributors
+- [ ] Update project status
 
-1. **Unpublish from Marketplaces**
-   ```bash
-   # VS Code Marketplace
-   vsce unpublish PutraAdiJaya.any-launcher-plus
+## 🔄 Rollback Procedure
 
-   # Open VSX
-   ovsx unpublish PutraAdiJaya.any-launcher-plus
-   ```
+If issues are discovered after deployment:
 
-2. **Delete GitHub Release**
-   - Go to GitHub Releases
-   - Delete the problematic release
-   - Delete the git tag
+### 1. Immediate Actions
 
-3. **Fix Issues**
-   - Create hotfix branch
-   - Fix critical issues
-   - Test thoroughly
-   - Release patch version
+```bash
+# Unpublish from marketplaces (if critical)
+vsce unpublish
+ovsx unpublish PutraAdiJaya.any-launcher-plus
+```
 
-## Secrets Configuration
+### 2. Fix and Redeploy
 
-### GitHub Secrets Required
+```bash
+# Fix the issue
+git checkout -b hotfix/critical-fix
 
-1. **OVSX_TOKEN**
-   - Get from: https://open-vsx.org/user-settings/tokens
-   - Scope: Publish extensions
-   - Add to: Repository Settings > Secrets > Actions
+# Make minimal fix
+# Test thoroughly
+# Update version (patch)
 
-2. **VSCE_PAT** (Optional)
-   - Get from: https://dev.azure.com/
-   - Scope: Marketplace (publish)
-   - Add to: Repository Settings > Secrets > Actions
+# Redeploy
+npm run package
+npm run publish:ovsx
+npm run publish:vsce
+```
 
-## Troubleshooting
+## 📋 Deployment Environments
 
-### Build Fails
-- Check Node.js version (should be 18+)
-- Clear node_modules and reinstall
-- Check for TypeScript errors
-- Verify all dependencies are installed
+### Production
 
-### Publishing Fails
-- Verify tokens are valid and not expired
-- Check marketplace status pages
-- Ensure version number is incremented
-- Verify package.json is valid
+- **VS Code Marketplace**: Primary distribution
+- **OpenVSX**: Alternative for VS Code variants
+- **GitHub Releases**: Manual downloads
 
-### Extension Doesn't Load
-- Check VS Code version compatibility
-- Verify activation events
-- Check for runtime errors in Developer Tools
-- Test in clean VS Code instance
+### Staging
 
-## Version Strategy
+- **Local VSIX**: Testing before publication
+- **Development Host**: VS Code F5 debugging
 
-We follow Semantic Versioning (semver):
+## 🔐 Security Considerations
 
-- **MAJOR** (1.0.0): Breaking changes
-- **MINOR** (0.1.0): New features, backwards compatible
-- **PATCH** (0.0.1): Bug fixes, backwards compatible
+### 1. Token Management
 
-## Support Channels
+- Store tokens securely (environment variables)
+- Rotate tokens regularly
+- Use minimal required permissions
+- Never commit tokens to repository
 
-- GitHub Issues: Bug reports and feature requests
-- GitHub Discussions: Questions and community support
-- Email: Direct support for security issues
+### 2. Package Integrity
+
+- Verify package contents before publishing
+- Check for sensitive information in package
+- Validate all dependencies
+- Review auto-generated files
+
+### 3. Access Control
+
+- Limit who can deploy
+- Use protected branches
+- Require reviews for releases
+- Audit deployment activities
+
+## 📈 Analytics & Metrics
+
+### Key Metrics to Track
+
+- **Downloads**: Total and daily downloads
+- **Ratings**: User ratings and reviews
+- **Issues**: Bug reports and feature requests
+- **Usage**: Telemetry data (if implemented)
+
+### Marketplace Analytics
+
+- **VS Code Marketplace**: [Publisher dashboard](https://marketplace.visualstudio.com/manage)
+- **OpenVSX**: [Publisher page](https://open-vsx.org/user-settings/namespaces)
+
+## 🆘 Troubleshooting
+
+### Common Issues
+
+#### Publishing Fails
+
+```bash
+# Check token validity
+vsce verify-pat $VSCE_PAT
+ovsx verify-pat $OVSX_TOKEN
+
+# Check package validity
+vsce package --allow-star-activation
+```
+
+#### Version Conflicts
+
+```bash
+# Check existing versions
+vsce show PutraAdiJaya.any-launcher-plus
+ovsx show PutraAdiJaya.any-launcher-plus
+```
+
+#### Package Too Large
+
+```bash
+# Check package size
+vsce ls
+
+# Exclude unnecessary files in .vscodeignore
+echo "*.log" >> .vscodeignore
+echo "test/" >> .vscodeignore
+```
+
+## 📞 Support Contacts
+
+### Marketplace Support
+
+- **VS Code Marketplace**: [Support](https://aka.ms/vscode-support)
+- **OpenVSX**: [GitHub Issues](https://github.com/eclipse/openvsx/issues)
+
+### Internal Contacts
+
+- **Lead Developer**: [@PutraAdiJaya](https://github.com/PutraAdiJaya)
+- **Repository**: [any-launcher-plus](https://github.com/PutraAdiJaya/any-launcher-plus)
 
 ---
 
-Last updated: 2025-01-18
+**Last Updated**: 2025-01-24  
+**Version**: 1.1.0
