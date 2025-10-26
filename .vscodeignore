@@ -2,15 +2,18 @@
 .git/
 .github/
 .gitignore
+.gitattributes
 
 # Development files
 .vscode/
 .vscode-test/
 src/
 tsconfig.json
+tsconfig.build.json
 eslint.config.js
 .prettierrc.json
 .prettierignore
+.editorconfig
 
 # Dependencies
 node_modules/
@@ -19,14 +22,23 @@ node_modules/
 **/*.map
 *.vsix
 
-# Spec story
+# Spec story and history
 .specstory/
+.cursor/
+.putra/
+.windsurf/
+.cursorindexingignore
 
 # Scripts
 scripts/
 
-# Documentation (keep only essential)
-# Keep: README.md, CHANGELOG.md, LICENSE, QUICKSTART.md, CONTRIBUTING.md, SECURITY.md
+# Internal documentation (keep only user-facing docs)
+# KEEP: README.md, CHANGELOG.md, LICENSE.txt, QUICKSTART.md, SECURITY.md
+# REMOVE: Internal specs, summaries, and development notes
+LAUNCHER_PIN_FEATURE_SPEC.md
+LAUNCHER_PIN_FEATURE_COMPLETE.md
+PIN_FEATURE_SUMMARY.md
+PRODUCTION_READY_SUMMARY.md
 DEPLOYMENT.md
 DOUBLE_CLICK_PREVENTION.md
 FINAL_CHECKLIST.md
@@ -37,8 +49,19 @@ PRODUCTION_READY.md
 PROJECT_SUMMARY.md
 SEARCH_AND_LOADER_FIXES.md
 WARP.md
+GITHUB_RELEASE.md
+
+# Release notes (keep only latest)
+RELEASE_NOTES_v1.1.0.md
+RELEASE_NOTES_v1.2.0.md
+
+# Examples (optional - can be removed if too large)
+examples/
 
 # Misc
 .DS_Store
 *.log
 npm-debug.log*
+yarn-error.log*
+.env
+.env.local
