@@ -41,6 +41,23 @@ const autoDiscoveryCache = {
 };
 const CACHE_DURATION = 30000; // 30 seconds
 
+// Pin state management
+let pinnedShortcuts = new Set<string>();
+
+// Load pinned shortcuts from storage
+function loadPinnedShortcuts(context: vscode.ExtensionContext): void {
+  const stored = context.globalState.get<string[]>('launcher.pinnedShortcuts', []);
+  pinnedShortcuts = new Set(stored);
+  console.log(`[Launcher] 📌 Loaded ${stored.length} pinned shortcuts:`, stored);
+}
+
+// Save pinned shortcuts to storage
+function savePinnedShortcuts(context: vscode.ExtensionContext): void {
+  const array = Array.from(pinnedShortcuts);
+  context.globalState.update('launcher.pinnedShortcuts', array);
+  console.log(`[Launcher] 💾 Saved ${array.length} pinned shortcuts:`, array);
+}
+
 // Common Windows program locations for verification
 const WINDOWS_PROGRAM_LOCATIONS: Record<string, string[]> = {
   'cmd.exe': ['C:\\Windows\\System32\\cmd.exe'],
@@ -392,6 +409,91 @@ function spawnDefaultOpen(target: string, cwd?: string) {
   }
 }
 
+/**
+ * Fungsi untuk menentukan apakah shortcut harus dijalankan di terminal internal
+ */
+function shouldRunInTerminal(s: Shortcut): boolean {
+  const args = s.args || [];
+
+  // Perintah development yang harus dijalankan di terminal
+  const devCommands = [
+    'npm',
+    'yarn',
+    'pnpm',
+    'node',
+    'python',
+    'py',
+    'go',
+    'cargo',
+    'dotnet',
+    'mvn',
+    'gradle',
+    'make',
+    'vsce',
+    'ovsx',
+    'tsc',
+    'webpack',
+    'vite',
+    'rollup',
+  ];
+
+  // Perintah CLI yang harus dijalankan di terminal
+  const cliCommands = ['git', 'docker', 'kubectl', 'ssh', 'scp', 'curl', 'wget', 'pip', 'composer'];
+
+  // Argumen yang menunjukkan perintah development
+  const devArgs = [
+    'run',
+    'start',
+    'build',
+    'test',
+    'dev',
+    'serve',
+    'compile',
+    'watch',
+    'clean',
+    'install',
+    'publish',
+    'package',
+    'deploy',
+  ];
+
+  // Jika program kosong, periksa args pertama untuk command development
+  if (!s.program || s.program.trim().length === 0) {
+    if (args.length > 0) {
+      const firstArg = args[0].toLowerCase();
+      // Periksa apakah arg pertama adalah development command
+      const isDevCommandInArgs = devCommands.some(
+        (cmd) => firstArg === cmd || firstArg.endsWith(`\\${cmd}`) || firstArg.endsWith(`\\${cmd}.exe`)
+      );
+      const isCliCommandInArgs = cliCommands.some(
+        (cmd) => firstArg === cmd || firstArg.endsWith(`\\${cmd}`) || firstArg.endsWith(`\\${cmd}.exe`)
+      );
+      return isDevCommandInArgs || isCliCommandInArgs;
+    }
+    return false;
+  }
+
+  const program = s.program.toLowerCase();
+
+  // Periksa apakah program adalah perintah development
+  const isDevCommand = devCommands.some(
+    (cmd) => program === cmd || program.endsWith(`\\${cmd}`) || program.endsWith(`\\${cmd}.exe`)
+  );
+
+  // Periksa apakah program adalah perintah CLI
+  const isCliCommand = cliCommands.some(
+    (cmd) => program === cmd || program.endsWith(`\\${cmd}`) || program.endsWith(`\\${cmd}.exe`)
+  );
+
+  // Periksa apakah argumen menunjukkan perintah development
+  const hasDevArgs = args.some((arg) => devArgs.includes(arg.toLowerCase()));
+
+  // Periksa apakah ini perintah cmd dengan perintah development
+  const isCmdWithDevCommand = (program.includes('cmd') || program.includes('powershell')) && hasDevArgs;
+
+  return isDevCommand || isCliCommand || isCmdWithDevCommand;
+}
+
 async function runShortcut(s: Shortcut): Promise<void> {
   // Create unique key for auto-discovered shortcuts to avoid conflicts
   const uniqueKey = s.program ? `${s.id}-${s.program.split('\\').pop() || s.program}` : s.id;
@@ -443,6 +545,72 @@ async function runShortcut(s: Shortcut): Promise<void> {
 
     // Resolve args
     let args = (s.args || []).map((a) => resolveVars(a, ctx)).filter((a) => a.length > 0);
+
+    // Deteksi perintah development yang harus berjalan di terminal internal
+    if (shouldRunInTerminal(s)) {
+      const program = s.program ? resolveVars(s.program, ctx) : '';
+
+      // Tampilkan toast info bahwa perintah sedang dijalankan
+      loadingMessage.dispose();
+      const terminalMessage = vscode.window.setStatusBarMessage(`🖥️ Menjalankan ${s.label} di terminal...`, 3000);
+
+      // Buat terminal baru untuk menjalankan perintah
+      const terminal = vscode.window.createTerminal({
+        name: `Launcher: ${s.label}`,
+        cwd: cwd,
+        env: s.env,
+      });
+
+      terminal.show();
+
+      // Buat command string dengan error handling
+      let command = '';
+
+      // Deteksi shell type dari terminal (PowerShell adalah default di VS Code Windows)
+      const isCmd = program === 'cmd' || program.includes('cmd.exe');
+      const isPowerShell =
+        program === 'powershell' || program.includes('powershell.exe') || (!program && process.platform === 'win32');
+
+      if (process.platform === 'win32') {
+        if (isCmd) {
+          // Untuk cmd, hilangkan /c dan gabungkan args
+          const filteredArgs = args.filter((arg) => arg !== '/c');
+          const baseCommand = filteredArgs.join(' ');
+          command = baseCommand;
+        } else if (isPowerShell || !program || program.trim().length === 0) {
+          // Untuk PowerShell atau program kosong (default terminal adalah PowerShell)
+          const baseCommand = args.join(' ');
+          // PowerShell syntax - no echo., use Write-Host
+          command = `${baseCommand}; if ($LASTEXITCODE -ne 0) { Write-Host '[Error] Command failed.' -ForegroundColor Red }`;
+        } else {
+          // Program biasa
+          command = `${program} ${args.join(' ')}`;
+        }
+      } else {
+        // Unix-like systems
+        if (!program || program.trim().length === 0) {
+          const baseCommand = args.join(' ');
+          command = `${baseCommand}; if [ $? -ne 0 ]; then echo '[Error] Command failed.'; fi`;
+        } else {
+          command = `${program} ${args.join(' ')}; if [ $? -ne 0 ]; then echo '[Error] Command failed.'; fi`;
+        }
+      }
+
+      // Jalankan perintah di terminal
+      terminal.sendText(command);
+
+      // Update status setelah command dikirim
+      setTimeout(() => {
+        terminalMessage.dispose();
+        vscode.window.setStatusBarMessage(`✅ ${s.label} - Terminal aktif`, 2000);
+      }, 500);
+
+      // Clear running state
+      runningShortcuts.delete(uniqueKey);
+      clearTimeout(loadingTimeout);
+
+      return;
+    }
     if (!s.program || s.program.trim().length === 0) {
       // default open for first arg or current file
       const target = args[0] || (ctx.file ?? cwd);
@@ -681,7 +849,7 @@ async function runShortcut(s: Shortcut): Promise<void> {
       output.appendLine(`[Launcher] Spawn options: ${JSON.stringify(spawnOptions, null, 2)}`);
 
       const spawnStart = Date.now();
-      const child = cp.spawn(finalProgram, finalArgs, spawnOptions);
+      const child: cp.ChildProcess = cp.spawn(finalProgram, finalArgs, spawnOptions);
       let processStarted = false;
       let processExited = false;
       let lastExitCode: number | null = null;
@@ -725,7 +893,10 @@ async function runShortcut(s: Shortcut): Promise<void> {
         output.appendLine(`[Launcher] Full command that succeeded: ${finalProgram} ${finalArgs.join(' ')}`);
         console.log(`[Launcher] Process spawned: ${finalProgram} ${finalArgs.join(' ')} | PID: ${child.pid}`);
 
-        // Disable success notifications - only log to console
+        // Tampilkan toast info bahwa aplikasi berhasil dijalankan
+        loadingMessage.dispose();
+        vscode.window.setStatusBarMessage(`✅ ${s.label} berhasil dijalankan`, 2000);
+
         console.log(`[Launcher] ✅ ${s.label} launched (PID: ${child.pid})`);
         output.appendLine(`[Launcher] ✅ ${s.label} launched successfully`);
 
@@ -870,7 +1041,7 @@ async function runShortcut(s: Shortcut): Promise<void> {
   }
 }
 
-class ShortcutsProvider implements vscode.TreeDataProvider<ShortcutItem> {
+class ShortcutsProvider implements vscode.TreeDataProvider<GroupItem | ShortcutItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<void>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
@@ -880,14 +1051,26 @@ class ShortcutsProvider implements vscode.TreeDataProvider<ShortcutItem> {
     this._onDidChangeTreeData.fire();
   }
 
-  getTreeItem(element: ShortcutItem): vscode.TreeItem {
+  getTreeItem(element: GroupItem | ShortcutItem): vscode.TreeItem {
     return element;
   }
 
-  // element is optional; when provided we have no children because shortcuts are leaves
-  async getChildren(element?: ShortcutItem): Promise<ShortcutItem[]> {
-    if (element) return [];
+  // element is optional; when provided we return children for groups, empty for shortcuts
+  async getChildren(element?: GroupItem | ShortcutItem): Promise<(GroupItem | ShortcutItem)[]> {
+    if (element instanceof ShortcutItem) {
+      return []; // Shortcuts have no children
+    }
 
+    if (element instanceof GroupItem) {
+      // Return shortcuts for this group
+      return element.shortcuts.map((s) => new ShortcutItem(s, pinnedShortcuts.has(s.id)));
+    }
+
+    // Root level - return groups
+    return this.getRootGroups();
+  }
+
+  private async getRootGroups(): Promise<GroupItem[]> {
     // Get config shortcuts immediately (fast)
     const configShortcuts = getConfigShortcuts();
 
@@ -905,12 +1088,61 @@ class ShortcutsProvider implements vscode.TreeDataProvider<ShortcutItem> {
       }
     }
 
-    const items = Array.from(uniqueShortcuts.values())
-      .filter((s) => platformOk(s) && whenOk(s) && profileOk(s))
-      .map((s) => new ShortcutItem(s));
+    const filteredShortcuts = Array.from(uniqueShortcuts.values()).filter(
+      (s) => platformOk(s) && whenOk(s) && profileOk(s)
+    );
 
-    console.log(`[Launcher] 🚀 Total shortcuts after deduplication: ${items.length}`);
-    return items;
+    console.log(`[Launcher] 🚀 Total shortcuts after deduplication: ${filteredShortcuts.length}`);
+
+    const groups: GroupItem[] = [];
+
+    // 1. Favorites group (always first if has pinned shortcuts)
+    const pinnedShortcutsList = filteredShortcuts.filter((s) => pinnedShortcuts.has(s.id));
+    if (pinnedShortcutsList.length > 0) {
+      groups.push(new GroupItem('Favorites', pinnedShortcutsList, 'favorites'));
+    }
+
+    // 2. Categorize all shortcuts by type
+    const categorizedShortcuts = this.categorizeShortcuts(filteredShortcuts);
+
+    // Add categorized groups
+    if (categorizedShortcuts.deployment.length > 0) {
+      groups.push(new GroupItem('Deployment', categorizedShortcuts.deployment, 'deployment'));
+    }
+
+    if (categorizedShortcuts.development.length > 0) {
+      groups.push(new GroupItem('Development', categorizedShortcuts.development, 'development'));
+    }
+
+    if (categorizedShortcuts.git.length > 0) {
+      groups.push(new GroupItem('Git & Version Control', categorizedShortcuts.git, 'git'));
+    }
+
+    if (categorizedShortcuts.docker.length > 0) {
+      groups.push(new GroupItem('Docker & Containers', categorizedShortcuts.docker, 'docker'));
+    }
+
+    if (categorizedShortcuts.shells.length > 0) {
+      groups.push(new GroupItem('Shells & Terminals', categorizedShortcuts.shells, 'shells'));
+    }
+
+    if (categorizedShortcuts.editors.length > 0) {
+      groups.push(new GroupItem('Editors & IDEs', categorizedShortcuts.editors, 'editors'));
+    }
+
+    if (categorizedShortcuts.browsers.length > 0) {
+      groups.push(new GroupItem('Browsers & Web', categorizedShortcuts.browsers, 'browsers'));
+    }
+
+    if (categorizedShortcuts.system.length > 0) {
+      groups.push(new GroupItem('System Tools', categorizedShortcuts.system, 'system'));
+    }
+
+    if (categorizedShortcuts.other.length > 0) {
+      groups.push(new GroupItem('Other', categorizedShortcuts.other, 'other'));
+    }
+
+    return groups;
   }
 
   private async getAutoDiscoveredWithCache(): Promise<{
@@ -961,6 +1193,149 @@ class ShortcutsProvider implements vscode.TreeDataProvider<ShortcutItem> {
     }
   }
 
+  private categorizeShortcuts(shortcuts: Shortcut[]): {
+    deployment: Shortcut[];
+    development: Shortcut[];
+    git: Shortcut[];
+    docker: Shortcut[];
+    shells: Shortcut[];
+    editors: Shortcut[];
+    browsers: Shortcut[];
+    system: Shortcut[];
+    other: Shortcut[];
+  } {
+    const categories = {
+      deployment: [] as Shortcut[],
+      development: [] as Shortcut[],
+      git: [] as Shortcut[],
+      docker: [] as Shortcut[],
+      shells: [] as Shortcut[],
+      editors: [] as Shortcut[],
+      browsers: [] as Shortcut[],
+      system: [] as Shortcut[],
+      other: [] as Shortcut[],
+    };
+
+    for (const s of shortcuts) {
+      const id = s.id.toLowerCase();
+      const label = (s.label || '').toLowerCase();
+      const program = (s.program || '').toLowerCase();
+
+      // Deployment (vsce, ovsx, publish, deploy)
+      if (
+        id.includes('publish') ||
+        id.includes('deploy') ||
+        id.includes('vsce') ||
+        id.includes('ovsx') ||
+        label.includes('publish') ||
+        label.includes('deploy')
+      ) {
+        categories.deployment.push(s);
+      }
+      // Git & Version Control
+      else if (
+        id.includes('git') ||
+        id.includes('github') ||
+        id.includes('gitlab') ||
+        program.includes('git') ||
+        label.includes('git')
+      ) {
+        categories.git.push(s);
+      }
+      // Docker & Containers
+      else if (
+        id.includes('docker') ||
+        id.includes('container') ||
+        id.includes('kubernetes') ||
+        id.includes('k8s') ||
+        program.includes('docker') ||
+        label.includes('docker')
+      ) {
+        categories.docker.push(s);
+      }
+      // Development (npm, yarn, build, compile, test, lint, watch)
+      else if (
+        id.includes('npm') ||
+        id.includes('yarn') ||
+        id.includes('pnpm') ||
+        id.includes('build') ||
+        id.includes('compile') ||
+        id.includes('test') ||
+        id.includes('lint') ||
+        id.includes('watch') ||
+        id.includes('dev') ||
+        id.includes('serve') ||
+        label.includes('npm') ||
+        label.includes('build') ||
+        label.includes('compile')
+      ) {
+        categories.development.push(s);
+      }
+      // Shells & Terminals
+      else if (
+        id.includes('cmd') ||
+        id.includes('powershell') ||
+        id.includes('wsl') ||
+        id.includes('bash') ||
+        id.includes('terminal') ||
+        id.includes('shell') ||
+        program.includes('cmd') ||
+        program.includes('powershell') ||
+        program.includes('wsl') ||
+        program.includes('bash')
+      ) {
+        categories.shells.push(s);
+      }
+      // Editors & IDEs
+      else if (
+        id.includes('code') ||
+        id.includes('cursor') ||
+        id.includes('windsurf') ||
+        id.includes('notepad') ||
+        id.includes('editor') ||
+        program.includes('code.exe') ||
+        program.includes('cursor.exe') ||
+        program.includes('notepad')
+      ) {
+        categories.editors.push(s);
+      }
+      // Browsers & Web
+      else if (
+        id.includes('chrome') ||
+        id.includes('firefox') ||
+        id.includes('edge') ||
+        id.includes('browser') ||
+        id.includes('localhost') ||
+        program.includes('chrome') ||
+        program.includes('firefox') ||
+        label.includes('localhost')
+      ) {
+        categories.browsers.push(s);
+      }
+      // System Tools
+      else if (
+        id.includes('task') ||
+        id.includes('explorer') ||
+        id.includes('control') ||
+        id.includes('regedit') ||
+        id.includes('services') ||
+        id.includes('calc') ||
+        program.includes('taskmgr') ||
+        program.includes('explorer') ||
+        program.includes('control') ||
+        program.includes('regedit')
+      ) {
+        categories.system.push(s);
+      }
+      // Other
+      else {
+        categories.other.push(s);
+      }
+    }
+
+    return categories;
+  }
+
   private async loadAutoDiscoveredShortcutsAsync(): Promise<Shortcut[]> {
     if (!shouldAutoDiscover()) return [];
     // Use existing sync version for now, can be optimized later
@@ -978,11 +1353,61 @@ class ShortcutsProvider implements vscode.TreeDataProvider<ShortcutItem> {
   }
 }
 
+class GroupItem extends vscode.TreeItem {
+  constructor(
+    public readonly label: string,
+    public readonly shortcuts: Shortcut[],
+    public readonly groupType: string
+  ) {
+    // Expanded only for Favorites, collapsed for others
+    const collapseState =
+      groupType === 'favorites' ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed;
+
+    super(label, collapseState);
+    this.contextValue = 'groupItem';
+    this.tooltip = `${shortcuts.length} shortcuts`;
+    this.iconPath = this.getGroupIcon();
+    this.description = `${shortcuts.length} items`;
+  }
+
+  private getGroupIcon(): vscode.ThemeIcon {
+    switch (this.groupType) {
+      case 'favorites':
+        return new vscode.ThemeIcon('star-full', new vscode.ThemeColor('charts.yellow'));
+      case 'deployment':
+        return new vscode.ThemeIcon('rocket', new vscode.ThemeColor('charts.red'));
+      case 'development':
+        return new vscode.ThemeIcon('tools', new vscode.ThemeColor('charts.blue'));
+      case 'git':
+        return new vscode.ThemeIcon('git-branch', new vscode.ThemeColor('charts.orange'));
+      case 'docker':
+        return new vscode.ThemeIcon('server-process', new vscode.ThemeColor('terminal.ansiCyan'));
+      case 'shells':
+        return new vscode.ThemeIcon('terminal', new vscode.ThemeColor('charts.purple'));
+      case 'editors':
+        return new vscode.ThemeIcon('edit', new vscode.ThemeColor('charts.green'));
+      case 'browsers':
+        return new vscode.ThemeIcon('browser', new vscode.ThemeColor('terminal.ansiBlue'));
+      case 'system':
+        return new vscode.ThemeIcon('gear', new vscode.ThemeColor('terminal.ansiWhite'));
+      case 'other':
+        return new vscode.ThemeIcon('folder', new vscode.ThemeColor('terminal.ansiBrightBlack'));
+      default:
+        return new vscode.ThemeIcon('folder', new vscode.ThemeColor('charts.foreground'));
+    }
+  }
+}
+
 class ShortcutItem extends vscode.TreeItem {
-  constructor(public readonly s: Shortcut) {
+  constructor(
+    public readonly s: Shortcut,
+    public readonly isPinned: boolean = false,
+    public readonly isLast: boolean = false
+  ) {
+    // Clean label without tree characters, same as Favorites
     super(s.label || s.id, vscode.TreeItemCollapsibleState.None);
-    this.contextValue = 'shortcutItem';
-    this.tooltip = `${s.program || '(default app)'} ${(s.args || []).join(' ')}`;
+    this.contextValue = isPinned ? 'shortcutItemPinned' : 'shortcutItem';
+    this.tooltip = `${s.program || '(default app)'} ${(s.args || []).join(' ')}${isPinned ? ' (Pinned)' : ''}`;
 
     // Remove click event - only play button will trigger execution
     // this.command = { command: 'launcher.run', title: 'Run Shortcut', arguments: [s] };
@@ -990,27 +1415,29 @@ class ShortcutItem extends vscode.TreeItem {
     // Use group-based icon with color
     this.iconPath = this.getGroupIcon(s);
 
-    // Keep description clean - only show if shortcut has args or special info
-    if (s.args && s.args.length > 0) {
-      this.description = s.args.join(' ');
+    // Show compact description for better visual hierarchy
+    if (s.program && s.program.trim().length > 0) {
+      // Show program name in description
+      const programName = s.program.split('\\').pop()?.split('/').pop() || s.program;
+      this.description = programName;
+    } else if (s.args && s.args.length > 0) {
+      // For empty program, show first arg as description
+      this.description = s.args[0];
     }
+
+    // Set resource URI to pass shortcut ID for commands
+    this.resourceUri = vscode.Uri.parse(`shortcut:${s.id}`);
   }
 
   private getGroupIcon(s: Shortcut): vscode.ThemeIcon | vscode.Uri {
-    // If shortcut has custom icon, use it but still apply group color
-    const group = this.detectGroup(s);
-    const groupColor = this.getGroupColor(group);
-
+    // Priority 1: Use custom icon from shortcut config if available
     if (s.icon) {
-      const customIcon = resolveIcon(s.icon);
-      // If it's a ThemeIcon, apply group color
-      if (customIcon instanceof vscode.ThemeIcon) {
-        return new vscode.ThemeIcon(customIcon.id, groupColor);
-      }
-      return customIcon;
+      return resolveIcon(s.icon);
     }
 
-    // Use group-specific icon and color
+    // Priority 2: Use group-based icon with color
+    const group = this.detectGroup(s);
+    const groupColor = this.getGroupColor(group);
     const iconName = this.getGroupIconName(group);
     return new vscode.ThemeIcon(iconName, groupColor);
   }
@@ -1577,9 +2004,9 @@ function autoDiscoveredShortcuts(): Shortcut[] {
             if (packageJson.scripts[script]) {
               list.push({
                 id: `auto-npm-${script}`,
-                label: `📦 npm run ${script}`,
-                program: plat === 'win32' ? 'cmd' : 'sh',
-                args: plat === 'win32' ? ['/c', 'npm', 'run', script] : ['-c', `npm run ${script}`],
+                label: `npm run ${script}`,
+                program: '',
+                args: ['npm', 'run', script],
                 cwd: workspaceFolder,
                 icon: 'run',
               });
@@ -1592,9 +2019,9 @@ function autoDiscoveredShortcuts(): Shortcut[] {
             if (packageJson.scripts.compile) {
               list.push({
                 id: 'auto-ext-compile',
-                label: '🔧 Compile Extension',
-                program: plat === 'win32' ? 'cmd' : 'sh',
-                args: plat === 'win32' ? ['/c', 'npm', 'run', 'compile'] : ['-c', 'npm run compile'],
+                label: 'Compile Extension',
+                program: '',
+                args: ['npm', 'run', 'compile'],
                 cwd: workspaceFolder,
                 icon: 'gear',
               });
@@ -1604,9 +2031,9 @@ function autoDiscoveredShortcuts(): Shortcut[] {
             if (packageJson.scripts.package) {
               list.push({
                 id: 'auto-ext-package',
-                label: '📦 Package Extension (.vsix)',
-                program: plat === 'win32' ? 'cmd' : 'sh',
-                args: plat === 'win32' ? ['/c', 'npm', 'run', 'package'] : ['-c', 'npm run package'],
+                label: 'Package Extension (.vsix)',
+                program: '',
+                args: ['npm', 'run', 'package'],
                 cwd: workspaceFolder,
                 icon: 'package',
               });
@@ -1616,9 +2043,9 @@ function autoDiscoveredShortcuts(): Shortcut[] {
             if (packageJson.scripts['publish:ovsx']) {
               list.push({
                 id: 'auto-ext-publish-ovsx',
-                label: '🚀 Publish to OpenVSX',
-                program: plat === 'win32' ? 'cmd' : 'sh',
-                args: plat === 'win32' ? ['/c', 'npm', 'run', 'publish:ovsx'] : ['-c', 'npm run publish:ovsx'],
+                label: 'Publish to OpenVSX',
+                program: '',
+                args: ['npm', 'run', 'publish:ovsx'],
                 cwd: workspaceFolder,
                 icon: 'cloud-upload',
               });
@@ -1628,9 +2055,9 @@ function autoDiscoveredShortcuts(): Shortcut[] {
             if (packageJson.scripts['publish:vsce']) {
               list.push({
                 id: 'auto-ext-publish-vsce',
-                label: '🏪 Publish to VS Code Marketplace',
-                program: plat === 'win32' ? 'cmd' : 'sh',
-                args: plat === 'win32' ? ['/c', 'npm', 'run', 'publish:vsce'] : ['-c', 'npm run publish:vsce'],
+                label: 'Publish to VS Code Marketplace',
+                program: '',
+                args: ['npm', 'run', 'publish:vsce'],
                 cwd: workspaceFolder,
                 icon: 'extensions',
               });
@@ -1640,9 +2067,9 @@ function autoDiscoveredShortcuts(): Shortcut[] {
             if (packageJson.scripts.watch) {
               list.push({
                 id: 'auto-ext-watch',
-                label: '👀 Watch & Compile',
-                program: plat === 'win32' ? 'cmd' : 'sh',
-                args: plat === 'win32' ? ['/c', 'npm', 'run', 'watch'] : ['-c', 'npm run watch'],
+                label: 'Watch & Compile',
+                program: '',
+                args: ['npm', 'run', 'watch'],
                 cwd: workspaceFolder,
                 icon: 'eye',
               });
@@ -2254,22 +2681,22 @@ function autoDiscoveredShells(): Shortcut[] {
   const list: Shortcut[] = [];
   if (process.platform === 'win32') {
     const candidates = [
-      // DISABLED: Already in launcher-putra.json to avoid duplicates
-      // { label: 'Command Prompt', program: 'C:\\Windows\\System32\\cmd.exe', args: [], icon: 'terminal' },
-      // {
-      //   label: 'PowerShell',
-      //   program: 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe',
-      //   args: [],
-      //   icon: 'terminal-powershell',
-      // },
-      // { label: 'WSL', program: 'C:\\Windows\\System32\\wsl.exe', args: [], icon: 'terminal-linux' },
-      // { label: 'Git Bash', program: 'C:\\Program Files\\Git\\bin\\bash.exe', args: [], icon: 'terminal-bash' },
-      // {
-      //   label: 'Git Bash (x86)',
-      //   program: 'C:\\Program Files (x86)\\Git\\bin\\bash.exe',
-      //   args: [],
-      //   icon: 'terminal-bash',
-      // },
+      // Common shells - always available
+      { label: 'Command Prompt', program: 'C:\\Windows\\System32\\cmd.exe', args: [], icon: 'terminal' },
+      {
+        label: 'PowerShell',
+        program: 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe',
+        args: [],
+        icon: 'terminal-powershell',
+      },
+      { label: 'WSL', program: 'C:\\Windows\\System32\\wsl.exe', args: [], icon: 'terminal-linux' },
+      { label: 'Git Bash', program: 'C:\\Program Files\\Git\\bin\\bash.exe', args: [], icon: 'terminal-bash' },
+      {
+        label: 'Git Bash (x86)',
+        program: 'C:\\Program Files (x86)\\Git\\bin\\bash.exe',
+        args: [],
+        icon: 'terminal-bash',
+      },
       {
         label: 'Ubuntu (WSL)',
         program: 'C:\\Windows\\System32\\wsl.exe',
@@ -2856,6 +3283,9 @@ export function activate(context: vscode.ExtensionContext) {
   // Initialize global shortcuts on first run
   initializeGlobalShortcuts(context);
 
+  // Load pinned shortcuts
+  loadPinnedShortcuts(context);
+
   const provider = new ShortcutsProvider();
   const view = vscode.window.createTreeView('launcher.shortcutsView', { treeDataProvider: provider });
   context.subscriptions.push(view);
@@ -3169,7 +3599,7 @@ export function activate(context: vscode.ExtensionContext) {
     console.log(`[Test] Testing strategy: ${selected.label}`);
 
     try {
-      let child;
+      let child: cp.ChildProcess | undefined;
 
       switch (selected.id) {
         case 'direct':
@@ -3206,7 +3636,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (child) {
         child.on('spawn', () => {
-          console.log(`[Test] ${selected.label} spawned with PID: ${child.pid}`);
+          console.log(`[Test] ${selected.label} spawned with PID: ${child?.pid}`);
           setTimeout(() => {
             vscode.window.showInformationMessage(`✅ ${selected.label} strategy executed successfully.`);
           }, 1000);
@@ -3253,7 +3683,7 @@ export function activate(context: vscode.ExtensionContext) {
       const testArgs = ['/c', 'start', '""', `"${selected.program}"`, ...selected.args];
       console.log(`[Test] Running: cmd ${testArgs.join(' ')}`);
 
-      const child = cp.spawn('cmd', testArgs, {
+      const child: cp.ChildProcess = cp.spawn('cmd', testArgs, {
         detached: true,
         stdio: 'ignore',
         windowsVerbatimArguments: true,
@@ -3527,6 +3957,31 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
+  // Pin/Unpin commands
+  const pinShortcutCmd = vscode.commands.registerCommand('launcher.pinShortcut', async (item: ShortcutItem) => {
+    if (!item || !item.s) {
+      vscode.window.showErrorMessage('Invalid shortcut item.');
+      return;
+    }
+
+    pinnedShortcuts.add(item.s.id);
+    savePinnedShortcuts(context);
+    provider.refresh();
+    vscode.window.showInformationMessage(`📌 Pinned "${item.s.label}" to favorites`);
+  });
+
+  const unpinShortcutCmd = vscode.commands.registerCommand('launcher.unpinShortcut', async (item: ShortcutItem) => {
+    if (!item || !item.s) {
+      vscode.window.showErrorMessage('Invalid shortcut item.');
+      return;
+    }
+
+    pinnedShortcuts.delete(item.s.id);
+    savePinnedShortcuts(context);
+    provider.refresh();
+    vscode.window.showInformationMessage(`📌 Unpinned "${item.s.label}" from favorites`);
+  });
+
   const searchShortcutsCmd = vscode.commands.registerCommand('launcher.searchShortcuts', async () => {
     const allShortcuts = [
       ...getConfigShortcuts(),
@@ -3598,7 +4053,9 @@ export function activate(context: vscode.ExtensionContext) {
     validateShortcutsCmd,
     clearCooldownsCmd,
     cleanInvalidShortcutsCmd,
-    searchShortcutsCmd
+    searchShortcutsCmd,
+    pinShortcutCmd,
+    unpinShortcutCmd
   );
 
   // Auto-validate shortcuts on startup (disabled for performance)

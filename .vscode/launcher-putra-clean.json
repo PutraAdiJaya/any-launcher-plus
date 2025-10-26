@@ -1,0 +1,293 @@
+[
+  {
+    "id": "cmd",
+    "label": "Command Prompt",
+    "program": "cmd.exe",
+    "args": [],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "terminal"
+  },
+  {
+    "id": "powershell",
+    "label": "PowerShell",
+    "program": "powershell.exe",
+    "args": [],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "terminal-powershell"
+  },
+  {
+    "id": "wsl",
+    "label": "WSL",
+    "program": "wsl.exe",
+    "args": [],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "terminal-linux"
+  },
+  {
+    "id": "explorer-here",
+    "label": "Explorer (Current Folder)",
+    "program": "explorer.exe",
+    "args": ["${workspaceFolder}"],
+    "platform": "win",
+    "icon": "folder-opened"
+  },
+  {
+    "id": "task-manager",
+    "label": "Task Manager",
+    "program": "taskmgr.exe",
+    "args": [],
+    "platform": "win",
+    "icon": "list-tree"
+  },
+  {
+    "id": "npm-install",
+    "label": "npm install",
+    "program": "",
+    "args": ["npm", "install"],
+    "cwd": "${workspaceFolder}",
+    "icon": "package"
+  },
+  {
+    "id": "npm-start",
+    "label": "npm start",
+    "program": "",
+    "args": ["npm", "start"],
+    "cwd": "${workspaceFolder}",
+    "icon": "play"
+  },
+  {
+    "id": "npm-dev",
+    "label": "npm run dev",
+    "program": "",
+    "args": ["npm", "run", "dev"],
+    "cwd": "${workspaceFolder}",
+    "icon": "run"
+  },
+  {
+    "id": "npm-build",
+    "label": "npm run build",
+    "program": "",
+    "args": ["npm", "run", "build"],
+    "cwd": "${workspaceFolder}",
+    "icon": "tools"
+  },
+  {
+    "id": "npm-test",
+    "label": "npm test",
+    "program": "",
+    "args": ["npm", "test"],
+    "cwd": "${workspaceFolder}",
+    "icon": "beaker"
+  },
+  {
+    "id": "npm-lint",
+    "label": "npm run lint",
+    "program": "",
+    "args": ["npm", "run", "lint"],
+    "cwd": "${workspaceFolder}",
+    "icon": "search"
+  },
+  {
+    "id": "npm-compile",
+    "label": "npm run compile",
+    "program": "",
+    "args": ["npm", "run", "compile"],
+    "cwd": "${workspaceFolder}",
+    "icon": "tools"
+  },
+  {
+    "id": "npm-watch",
+    "label": "npm run watch",
+    "program": "",
+    "args": ["npm", "run", "watch"],
+    "cwd": "${workspaceFolder}",
+    "icon": "eye"
+  },
+  {
+    "id": "yarn-install",
+    "label": "yarn install",
+    "program": "",
+    "args": ["yarn", "install"],
+    "cwd": "${workspaceFolder}",
+    "icon": "package"
+  },
+  {
+    "id": "go-run",
+    "label": "go run main.go",
+    "program": "",
+    "args": ["go", "run", "main.go"],
+    "cwd": "${workspaceFolder}",
+    "icon": "play"
+  },
+  {
+    "id": "go-build",
+    "label": "go build",
+    "program": "",
+    "args": ["go", "build"],
+    "cwd": "${workspaceFolder}",
+    "icon": "tools"
+  },
+  {
+    "id": "go-test",
+    "label": "go test",
+    "program": "",
+    "args": ["go", "test", "./..."],
+    "cwd": "${workspaceFolder}",
+    "icon": "beaker"
+  },
+  {
+    "id": "dotnet-run",
+    "label": "dotnet run",
+    "program": "",
+    "args": ["dotnet", "run"],
+    "cwd": "${workspaceFolder}",
+    "icon": "play"
+  },
+  {
+    "id": "dotnet-build",
+    "label": "dotnet build",
+    "program": "",
+    "args": ["dotnet", "build"],
+    "cwd": "${workspaceFolder}",
+    "icon": "tools"
+  },
+  {
+    "id": "dotnet-test",
+    "label": "dotnet test",
+    "program": "",
+    "args": ["dotnet", "test"],
+    "cwd": "${workspaceFolder}",
+    "icon": "beaker"
+  },
+  {
+    "id": "python-main",
+    "label": "python main.py",
+    "program": "",
+    "args": ["python", "main.py"],
+    "cwd": "${workspaceFolder}",
+    "icon": "play"
+  },
+  {
+    "id": "cargo-run",
+    "label": "cargo run",
+    "program": "",
+    "args": ["cargo", "run"],
+    "cwd": "${workspaceFolder}",
+    "icon": "play"
+  },
+  {
+    "id": "cargo-build",
+    "label": "cargo build",
+    "program": "",
+    "args": ["cargo", "build"],
+    "cwd": "${workspaceFolder}",
+    "icon": "tools"
+  },
+  {
+    "id": "cargo-test",
+    "label": "cargo test",
+    "program": "",
+    "args": ["cargo", "test"],
+    "cwd": "${workspaceFolder}",
+    "icon": "beaker"
+  },
+  {
+    "id": "git-status",
+    "label": "git status",
+    "program": "",
+    "args": ["git", "status"],
+    "cwd": "${workspaceFolder}",
+    "icon": "git-branch"
+  },
+  {
+    "id": "git-log",
+    "label": "git log",
+    "program": "",
+    "args": ["git", "log", "--oneline", "--graph", "--all"],
+    "cwd": "${workspaceFolder}",
+    "icon": "git-commit"
+  },
+  {
+    "id": "git-pull",
+    "label": "git pull",
+    "program": "",
+    "args": ["git", "pull"],
+    "cwd": "${workspaceFolder}",
+    "icon": "cloud-download"
+  },
+  {
+    "id": "git-push",
+    "label": "git push",
+    "program": "",
+    "args": ["git", "push"],
+    "cwd": "${workspaceFolder}",
+    "icon": "cloud-upload"
+  },
+  {
+    "id": "docker-compose-up",
+    "label": "docker-compose up",
+    "program": "",
+    "args": ["docker-compose", "up"],
+    "cwd": "${workspaceFolder}",
+    "icon": "server-process"
+  },
+  {
+    "id": "docker-compose-down",
+    "label": "docker-compose down",
+    "program": "",
+    "args": ["docker-compose", "down"],
+    "cwd": "${workspaceFolder}",
+    "icon": "debug-stop"
+  },
+  {
+    "id": "docker-ps",
+    "label": "docker ps",
+    "program": "",
+    "args": ["docker", "ps"],
+    "cwd": "${workspaceFolder}",
+    "icon": "list-unordered"
+  },
+  {
+    "id": "vsce-package",
+    "label": "vsce package",
+    "program": "",
+    "args": ["vsce", "package"],
+    "cwd": "${workspaceFolder}",
+    "icon": "package"
+  },
+  {
+    "id": "vsce-publish",
+    "label": "vsce publish",
+    "program": "",
+    "args": ["vsce", "publish"],
+    "cwd": "${workspaceFolder}",
+    "icon": "rocket"
+  },
+  {
+    "id": "ovsx-publish",
+    "label": "ovsx publish",
+    "program": "",
+    "args": ["ovsx", "publish"],
+    "cwd": "${workspaceFolder}",
+    "icon": "cloud-upload"
+  },
+  {
+    "id": "chrome-localhost-3000",
+    "label": "Open localhost:3000",
+    "program": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "args": ["http://localhost:3000"],
+    "platform": "win",
+    "icon": "preview"
+  },
+  {
+    "id": "chrome-localhost-8080",
+    "label": "Open localhost:8080",
+    "program": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "args": ["http://localhost:8080"],
+    "platform": "win",
+    "icon": "preview"
+  }
+]

@@ -1,97 +1,124 @@
 # Changelog
 
-All notable changes to the "Launcher Plus (Shortcuts)" extension will be documented in this file.
+## [1.3.0] - 2025-10-27
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+### 🎉 Major Features
 
-## [1.1.0] - 2025-01-24
+#### Smart Categorization System
+- Auto-categorization of shortcuts into 10 intelligent categories
+- Smart detection based on ID, label, and program path
+- Categories: Deployment, Development, Git, Docker, Shells, Editors, Browsers, System Tools, Other
+- No manual grouping required
 
-### Added
-- **Play Button**: Added inline play button (▶️) for each shortcut item in tree view
-- **Group-Based Icons**: 17 distinct groups with unique colored icons and smart detection
-- **Clean Interface**: Focused on colored icons only for better visual clarity
-- **Extension Development Shortcuts**: Auto-detected shortcuts for VS Code extension projects
-  - 🔧 Compile Extension (npm run compile)
-  - 📦 Package Extension (.vsix) (npm run package)
-  - 🚀 Publish to OpenVSX (npm run publish:ovsx)
-  - 🏪 Publish to VS Code Marketplace (npm run publish:vsce)
-  - 👀 Watch & Compile (npm run watch)
-  - 🧹 Clean Build (npm run clean)
-  - 🔍 Lint Extension Code (npm run lint)
-  - ✨ Format Code (npm run format)
-  - 🔐 **SSH/Remote**: Bright Red lock icon (ssh, scp, sftp, putty, remote connections)
-  - 🟢 **Node.js**: Green method icon (npm, yarn, node, webpack, vite, rollup)
-  - 🔵 **Go**: Cyan go-to-file icon (go run, go build, go test)
-  - 🟠 **Rust**: Orange gear icon (cargo, rust tools)
-  - 🟣 **.NET**: Purple class icon (dotnet, C#, msbuild)
-  - 🟡 **Java**: Yellow object icon (maven, gradle, java tools)
-  - 🔷 **Python**: Blue snake icon (python, pip, django, flask)
-  - 🔶 **Docker**: Bright Cyan package icon (docker, kubernetes, containers)
-  - 🟪 **Database**: Bright Purple database icon (mysql, postgres, mongodb, redis, dbeaver)
-  - ⭐ **Git**: Bright Yellow source-control icon (git, github, gitlab, sourcetree)
-  - 💻 **Terminal**: Bright Blue terminal icon (cmd, powershell, bash, wsl)
-  - 🌐 **Browser**: Green browser icon (chrome, firefox, edge, opera)
-  - 📝 **Editor**: Bright Purple code icon (vscode, notepad, sublime, vim, emacs)
-  - 📁 **File**: Bright Yellow folder icon (explorer, downloads, documents)
-  - 🎨 **Media**: Bright Red play icon (photoshop, gimp, vlc, paint)
-  - 💬 **Communication**: Bright Green chat icon (discord, slack, teams, zoom)
-  - ⚙️ **System**: White settings icon (task manager, registry, control panel)
-  - 🔧 **Build**: Orange tools icon (generic build, make, compile)
-  - 🧩 **Extension**: Orange extensions icon (VS Code extension development)
-- **Improved UX**: Removed click-to-run from tree items, now only play button triggers execution
+#### Enhanced Favorites
+- Pin/Unpin shortcuts with one click
+- Persistent favorites across sessions
+- Auto-expanded Favorites group
+- Play button on all favorite items
 
-### Changed
-- **Reduced Notifications**: Disabled success notifications when programs launch (only console logging)
-- **Selective Error Notifications**: Only show error notifications for "not found" errors, other errors are logged silently
-- **Version**: Incremented to 1.1.0
+#### Visual Improvements
+- Unique colors for each category (10 distinct colors)
+- All groups collapsed by default (except Favorites)
+- Professional icons for each category
+- Clean UI without emoji in group titles
+- Consistent styling across all groups
 
-### Fixed
-- Better user experience with less intrusive notifications
-- Cleaner tree view interaction model
-- Fixed package.json colors configuration error (VS Code compliance)
-- Improved group detection logic for better color categorization
-- Enhanced pattern matching for shortcut grouping (id, label, and program path analysis)
-- Removed crowded emoji descriptions - now uses clean colored icons only
+#### Terminal Integration Enhancements
+- Auto-detect development commands (npm, yarn, go, dotnet, etc.)
+- PowerShell compatible (fixed `echo.` errors)
+- Run commands in internal terminal
+- Better error handling
+- Terminal stays open after execution
 
-## [1.0.0] - 2025-01-24
+#### Auto-Discovery Improvements
+- Re-enabled shells auto-discovery (CMD, PowerShell, WSL, Git Bash)
+- Build tools detection from package.json
+- VS Code extension development shortcuts
+- Smart caching for performance
 
-### Added
-- Professional rocket icon and banner design
-- Enhanced README with visual diagrams and professional styling
-- Improved marketplace presentation
+### 🐛 Bug Fixes
+- Fixed duplicate icons (emoji + icon field)
+- Fixed inconsistent padding between groups
+- Fixed tree line characters appearing incorrectly
+- Fixed PowerShell compatibility issues
+- Fixed command execution with empty program field
+- Improved auto-discovery cache
+- Better shortcut deduplication
 
-## [0.1.0] - 2025-01-18
+### 🔧 Breaking Changes
+- Removed "Configuration Shortcuts" group (replaced with smart categories)
+- Removed emoji from group titles
+- All groups collapsed by default (except Favorites)
 
-### Added
-- Initial release of Launcher Plus
-- Tree view panel in Explorer sidebar for quick access to shortcuts
-- Quick Pick interface with keyboard shortcut (`Ctrl+Alt+L` / `Cmd+Alt+L`)
-- Context variable support: `${file}`, `${workspaceFolder}`, `${relativeFile}`, `${lineNumber}`, `${selectedText}`
-- Default application handler for opening files with OS default apps
-- Recent items tracking with configurable limit
-- Custom icon support (codicons and file paths)
-- Sequence execution (serial and parallel modes)
-- Profile management for filtering shortcuts by context
-- Auto-discovery of common applications (Chrome, Office, Git Bash, WSL, etc.)
-- Import/Export functionality for sharing configurations
-- Visual shortcut editor with webview interface
-- Task generation from shortcuts to VS Code tasks.json
-- Cross-platform support (Windows, macOS, Linux)
-- Compatibility with VS Code variants (Cursor, Windsurf, etc.)
-- Status bar integration with variant detection
-- Workspace-level and user-level configuration support
-- Platform-specific shortcuts with `platform` property
-- Conditional execution with `when` clauses
-- Environment variable support in shortcuts
-- Working directory configuration per shortcut
+### 📚 Documentation
+- Added ICON_GUIDE.md
+- Added SHORTCUT_EXAMPLES.md
+- Added TERMINAL_INTEGRATION.md
+- Added TROUBLESHOOTING.md
 
-### Security
-- Added warnings for admin elevation on Windows
-- Implemented platform checks before execution
-- Added condition validation for `when` clauses
+## [1.2.0] - 2025-10-26
 
-### Documentation
-- Comprehensive README with examples and usage guide
-- Example configurations in `/examples` folder
-- Inline code documentation
+### Ditambahkan
+- Fitur CLI untuk menjalankan shortcut langsung dari terminal
+- Integrasi dengan PowerShell terminal di VS Code
+- Terminal terintegrasi untuk perintah development (npm, yarn, dll)
+- Deteksi otomatis perintah yang harus berjalan di terminal
+- Perintah `launcher.openCLI` untuk membuka terminal CLI terintegrasi
+- Perintah `launcher.runFromCLI` untuk menjalankan shortcut dari CLI
+- Perintah `launcher.deploy` untuk menjalankan deployment tool
+- Dukungan untuk menjalankan perintah deployment langsung dari terminal
+- Alias `launcher` untuk PowerShell dan bash
+- Toast/flash info di status bar tanpa notification popup yang mengganggu
+- Feedback visual saat menjalankan shortcut (3 jenis pesan berbeda)
+
+### Diubah
+- Peningkatan versi dari 1.1.1 ke 1.2.0
+- Deskripsi ekstensi diperbarui untuk mencerminkan fitur baru
+- Kata kunci diperbarui untuk mencakup CLI, terminal, dan deployment
+
+### Diperbaiki
+- Perbaikan minor pada integrasi terminal
+- Optimasi performa untuk eksekusi shortcut
+
+## [1.1.1] - 2025-09-15
+
+### Diperbaiki
+- Perbaikan bug pada auto-discovery di Windows
+- Perbaikan masalah dengan path program yang mengandung spasi
+- Peningkatan stabilitas untuk Electron apps
+
+## [1.1.0] - 2025-08-20
+
+### Ditambahkan
+- Play Button Interface - Tombol play inline untuk UX yang lebih baik
+- Smart Color Grouping - 17 kategori dengan warna unik
+- Extension Development - Shortcuts otomatis untuk proyek ekstensi VS Code
+- Reduced Notifications - Eksekusi silent dengan pesan error yang esensial
+- Improved Detection - Pattern matching yang lebih baik untuk kategorisasi
+
+### Diubah
+- Peningkatan UI untuk tree view
+- Optimasi performa untuk auto-discovery
+
+## [1.0.0] - 2025-07-01
+
+### Ditambahkan
+- Global Shortcuts - Definisikan shortcut sekali, gunakan di semua workspace
+- Auto-Initialization - Shortcut default dibuat otomatis saat pertama kali install
+- Auto-Recovery - File shortcut yang terhapus akan dipulihkan otomatis
+- Double-Click Prevention - Cooldown 300ms untuk mencegah eksekusi ganda
+- Loading Indicators - Feedback visual real-time dengan pesan status bar
+- Smart Validation - Verifikasi otomatis path program dengan laporan detail
+- Auto-Fix Engine - Deteksi dan perbaikan cerdas path program yang tidak valid
+- Duplicate Prevention - Deduplikasi ID untuk memastikan daftar shortcut yang bersih
+- SSH Shortcuts - Template SSH/SCP bawaan untuk localhost dan koneksi remote
+- Build Commands - Shortcut terkonfigurasi untuk npm, go, cargo, docker, dll
+
+### Diubah
+- Peningkatan mayor dari versi beta
+- Arsitektur kode yang lebih modular
+- Performa yang lebih baik untuk eksekusi shortcut
+
+### Diperbaiki
+- Berbagai bug pada versi beta
+- Masalah kompatibilitas lintas platform

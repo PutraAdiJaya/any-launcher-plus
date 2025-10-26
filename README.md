@@ -6,10 +6,10 @@
 <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; border-radius: 20px; margin: 20px 0; position: relative; overflow: hidden;">
   <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(120, 200, 255, 0.3) 0%, transparent 50%); animation: galaxyRotate 20s linear infinite;"></div>
   <div style="position: relative; z-index: 2;">
-    <h1 style="color: white; font-size: 3.5em; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.5); animation: glow 2s ease-in-out infinite alternate;">
+    <h1 style="color: black; font-size: 3.5em; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.5); animation: glow 2s ease-in-out infinite alternate;">
       🚀 Launcher Plus
     </h1>
-    <p style="color: rgba(255,255,255,0.9); font-size: 1.3em; margin: 10px 0 0 0; text-shadow: 0 0 10px rgba(255,255,255,0.3);">
+    <p style="color: rgba(0,0,0,0.9); font-size: 1.3em; margin: 10px 0 0 0; text-shadow: 0 0 10px rgba(255,255,255,0.3);">
       ✨ Launch applications with galactic speed ✨
     </p>
   </div>
@@ -30,31 +30,31 @@
 
 ![Launcher Plus Banner](media/banner.png)
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue)](https://github.com/PutraAdiJaya/any-launcher-plus)
+[![Version](https://img.shields.io/badge/version-1.3.0-blue)](https://github.com/PutraAdiJaya/any-launcher-plus)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/d/PutraAdiJaya.any-launcher-plus?label=VS%20Code%20Downloads)](https://marketplace.visualstudio.com/items?itemName=PutraAdiJaya.any-launcher-plus)
 [![OpenVSX Downloads](https://img.shields.io/open-vsx/dt/PutraAdiJaya/any-launcher-plus?label=OpenVSX%20Downloads)](https://open-vsx.org/extension/PutraAdiJaya/any-launcher-plus)
 [![GitHub Release](https://img.shields.io/github/v/release/PutraAdiJaya/any-launcher-plus)](https://github.com/PutraAdiJaya/any-launcher-plus/releases)
 
-**Launch applications, run scripts, and open documents directly from your editor with customizable shortcuts and automation workflows.**
+**Professional shortcuts manager with smart categorization, favorites, and terminal integration. Launch apps, run scripts, and boost productivity instantly.**
 
-[🚀 Quick Start](#-installation) • [✨ Features](#-features) • [⚙️ Configuration](#️-configuration) • [📚 Examples](#-examples) • [🤝 Contributing](#-contributing)
+[🚀 Quick Start](#-installation) • [✨ Features](#-features) • [⚙️ Configuration](#️-configuration) • [📚 Examples](#-examples) • [🖥️ CLI Usage](CLI_USAGE.md) • [🤝 Contributing](#-contributing)
 
 </div>
 
 ---
-![alt text](media/image.png)
+![alt text](media/image.png) 
 
 ## ✨ Features
 
 <div align="center">
 
-| 🚀 **Core Features** | ⚡ **Advanced Features** | 🛠️ **Developer Tools** |
-|:---:|:---:|:---:|
-| Tree View Panel | Sequence Execution | Auto-Discovery |
-| Quick Pick (`Ctrl+Alt+L`) | Profile Management | Import/Export |
-| Context Variables | Visual Editor | Task Generation |
-| Default App Handler | Recent Items | Smart Validation |
+| 🚀 **Core Features** | ⚡ **Advanced Features** | 🛠️ **Developer Tools** | 🖥️ **New in v1.2.0** |
+|:---:|:---:|:---:|:---:|
+| Tree View Panel | Sequence Execution | Auto-Discovery | CLI Integration |
+| Quick Pick (`Ctrl+Alt+L`) | Profile Management | Import/Export | Terminal Mode |
+| Context Variables | Visual Editor | Task Generation | Deployment Tools |
+| Default App Handler | Recent Items | Smart Validation | PowerShell Support |
 
 </div>
 
@@ -113,20 +113,50 @@
 
 </div>
 
-### 🎉 What's New in v1.1.0
+### 🎉 What's New in v1.2.0
 
 <div align="center">
 
 ```
-🌍 Global Shortcuts    🎉 Auto-Initialization    🔄 Auto-Recovery
-�️ Smarot Cooldowns     📊 Loading Indicators     🔍 Smart Validation
-� Auto-Fix  Engine     🚫 Duplicate Prevention   🔐 SSH Templates
-⚡ Build Commands      🎯 90+ Ready Commands     🚀 Enhanced UX
+🖥️ Terminal Internal    🔄 Auto Detection        🚀 VSCE/OVSX Shortcuts
+⚡ Development Commands  📊 Status Bar Messages   🔍 Error Handling
+🛠️ VS Code Integration  🚫 No External Windows   🔐 Build & Publish
 ```
 
 </div>
 
 **🌟 Major Enhancements:**
+
+- **🖥️ Terminal Internal Integration** - Development commands like `npm run compile` now run directly in VS Code's internal terminal, not in separate windows!
+- **🔄 Auto Detection** - Launcher Plus automatically detects commands that should run in internal terminal (npm, yarn, node, python, go, cargo, dotnet, etc.)
+- **💬 Toast/Flash Info** - Non-intrusive visual feedback via status bar messages instead of popup notifications
+- **🛡️ Error Handling** - Terminal stays open when errors occur so you can read error messages
+- **🚀 VSCE/OVSX Shortcuts** - Pre-configured shortcuts for extension development: compile, package, publish to VS Code Marketplace and OpenVSX
+- **🔧 Build Commands** - Complete set of shortcuts for extension development workflow
+
+**📋 New Commands:**
+- `🔧 npm run compile` - TypeScript compilation
+- `📦 npm run package` - Create .vsix package
+- `🚀 npm run publish:vsce` - Publish to VS Code Marketplace
+- `🚀 npm run publish:ovsx` - Publish to OpenVSX
+- `🧹 npm run clean` - Clean build artifacts
+- `🔨 npm run build` - Complete build process
+
+**🔄 Terminal Integration:**
+When you run development shortcuts, they automatically:
+- Create a new terminal in VS Code named `Launcher: [command name]`
+- Execute the command directly in that terminal (no external CMD windows!)
+- Show status bar messages like "🖥️ Running [name] in terminal..." (3 seconds)
+- Keep terminal open for monitoring output and error messages
+- All extension development commands (compile, package, publish) run in VS Code terminal
+
+**🧩 Extension Development Workflow:**
+```
+🔧 Compile → 📦 Package → 🚀 Publish (OVSX) → 🚀 Publish (VSCE)
+```
+All commands run seamlessly in VS Code's integrated terminal!
+
+### 🎉 Previous Features (v1.1.0)
 
 - **▶️ Play Button Interface** - Clean inline play buttons replace click-to-run for better UX
 - **🎨 Smart Color Grouping** - 17 intelligent categories with unique colored icons
@@ -246,15 +276,21 @@ The extension automatically creates default shortcuts on first install with 90+ 
 
 **Developer-Focused Shortcuts (100+ Commands):**
 
-**🧩 VS Code Extension Development (Auto-detected):**
-- **Compile**: `npm run compile` - TypeScript compilation
-- **Package**: `npm run package` - Create .vsix file
-- **Publish OpenVSX**: `npm run publish:ovsx` - Publish to open-vsx.org
-- **Publish Marketplace**: `npm run publish:vsce` - Publish to VS Code Marketplace
-- **Watch**: `npm run watch` - Development watch mode
-- **Clean**: `npm run clean` - Clean build artifacts
-- **Lint**: `npm run lint` - Code linting
-- **Format**: `npm run format` - Code formatting
+**🧩 VS Code Extension Development (Internal Terminal):**
+- **🔧 Compile**: `npm run compile` - TypeScript compilation in VS Code terminal
+- **📦 Package**: `npm run package` - Create .vsix file in VS Code terminal
+- **🚀 Publish OpenVSX**: `npm run publish:ovsx` - Publish to open-vsx.org in VS Code terminal
+- **🚀 Publish Marketplace**: `npm run publish:vsce` - Publish to VS Code Marketplace in VS Code terminal
+- **👀 Watch**: `npm run watch` - Development watch mode in VS Code terminal
+- **🧹 Clean**: `npm run clean` - Clean build artifacts in VS Code terminal
+- **🔍 Lint**: `npm run lint` - Code linting in VS Code terminal
+- **✨ Format**: `npm run format` - Code formatting in VS Code terminal
+- **📦 Direct VSCE Package**: `vsce package` - Direct VSCE packaging in VS Code terminal
+- **🚀 Direct VSCE Publish**: `vsce publish` - Direct VSCE publishing in VS Code terminal
+- **🚀 Direct OVSX Publish**: `ovsx publish` - Direct OpenVSX publishing in VS Code terminal
+- **🔨 Build**: `npm run build` - Complete build process in VS Code terminal
+
+> 🖥️ **All extension development commands run in VS Code's integrated terminal - no external windows!**
 
 **💻 Terminals & Shells:**
 - Command Prompt, PowerShell, WSL, Git Bash
@@ -436,6 +472,8 @@ Access via Command Palette (`Ctrl+Shift+P`):
 - `Launcher Plus: Run Shortcut by ID` - Execute specific shortcut
 - `Launcher Plus: Open Settings File` - Choose Global or Workspace shortcuts file
 - `Launcher Plus: Search Shortcuts` - Search and run shortcuts by name
+- `Launcher Plus: Open CLI Terminal` - Open integrated CLI terminal
+- `Launcher Plus: Run Deployment Tool` - Launch deployment interface
 
 **Configuration:**
 - `Launcher Plus: Open Settings` - Configure extension settings
@@ -465,7 +503,9 @@ Custom keybindings:
 ```json
 [
   { "key": "ctrl+alt+1", "command": "launcher.run", "args": "open-browser" },
-  { "key": "ctrl+alt+2", "command": "launcher.run", "args": "open-terminal" }
+  { "key": "ctrl+alt+2", "command": "launcher.run", "args": "open-terminal" },
+  { "key": "ctrl+alt+t", "command": "launcher.openCLI" },
+  { "key": "ctrl+alt+d", "command": "launcher.deploy" }
 ]
 ```
 
@@ -571,12 +611,14 @@ Requires tokens: `OVSX_TOKEN` and `VSCE_PAT`
 
 ## 🗺️ Roadmap
 
+- [x] CLI Integration and Terminal Mode (v1.2.0)
+- [x] Deployment Tools (v1.2.0)
 - [ ] Automated Windows admin elevation
 - [ ] Shortcut templates library
 - [ ] Cloud sync for configurations
 - [ ] Macro recording
 - [ ] Conditional execution based on file types
-- [ ] Integration with external task runners
+- [ ] Enhanced CLI with argument support
 
 ---
 
@@ -611,6 +653,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 💬 Support
 
 - 📖 [Quick Start Guide](QUICKSTART.md) - Get started in 5 minutes
+- 🖥️ [CLI Usage Guide](CLI_USAGE.md) - Learn how to use the terminal integration
 - 📧 [Report Issues](https://github.com/PutraAdiJaya/any-launcher-plus/issues) - Bug reports and feature requests
 - 💬 [Discussions](https://github.com/PutraAdiJaya/any-launcher-plus/discussions) - Questions and community support
 - 🔒 [Security Policy](SECURITY.md) - Report security vulnerabilities
@@ -623,13 +666,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### 🌟 Made with ❤️ for the VS Code Community
 
-**Launcher Plus v1.1.0** - Empowering developers with seamless workflow automation and smart color grouping
+**Launcher Plus v1.2.0** - Empowering developers with CLI integration, terminal mode, and deployment tools
 
 [![GitHub Stars](https://img.shields.io/github/stars/PutraAdiJaya/any-launcher-plus?style=social)](https://github.com/PutraAdiJaya/any-launcher-plus/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/PutraAdiJaya/any-launcher-plus?style=social)](https://github.com/PutraAdiJaya/any-launcher-plus/network/members)
 [![VS Code Marketplace](https://img.shields.io/badge/VS%20Code-Marketplace-blue?style=social&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=PutraAdiJaya.any-launcher-plus)
 
-**🎯 Key Features:** Play Button Interface • Smart Color Grouping • Extension Development • 100+ Auto-Shortcuts
+**🎯 Key Features:** CLI Integration • Terminal Mode • Deployment Tools • PowerShell Support
 
 [⬆ Back to Top](#launcher-plus-shortcuts) • [🚀 Get Started](#-installation) • [⭐ Star on GitHub](https://github.com/PutraAdiJaya/any-launcher-plus) • [📦 VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=PutraAdiJaya.any-launcher-plus)
 
