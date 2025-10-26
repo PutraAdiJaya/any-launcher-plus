@@ -3,7 +3,7 @@
   "displayName": "Launcher Plus (Shortcuts)",
   "description": "Shortcut list to launch apps, scripts, or open docs from VS Code / Cursor / Windsurf. Tree view, QuickPick, variables, recent items.",
   "publisher": "PutraAdiJaya",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/PutraAdiJaya/any-launcher-plus.git"

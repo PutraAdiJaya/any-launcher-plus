@@ -2,6 +2,32 @@
 
 <div align="center">
 
+<!-- Galaxy Effect Header -->
+<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; border-radius: 20px; margin: 20px 0; position: relative; overflow: hidden;">
+  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(120, 200, 255, 0.3) 0%, transparent 50%); animation: galaxyRotate 20s linear infinite;"></div>
+  <div style="position: relative; z-index: 2;">
+    <h1 style="color: white; font-size: 3.5em; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.5); animation: glow 2s ease-in-out infinite alternate;">
+      🚀 Launcher Plus
+    </h1>
+    <p style="color: rgba(255,255,255,0.9); font-size: 1.3em; margin: 10px 0 0 0; text-shadow: 0 0 10px rgba(255,255,255,0.3);">
+      ✨ Launch applications with galactic speed ✨
+    </p>
+  </div>
+</div>
+
+<style>
+@keyframes galaxyRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 20px rgba(255,255,255,0.5), 0 0 30px rgba(120,119,198,0.5), 0 0 40px rgba(120,119,198,0.5); }
+  to { text-shadow: 0 0 30px rgba(255,255,255,0.8), 0 0 40px rgba(120,119,198,0.8), 0 0 50px rgba(120,119,198,0.8); }
+}
+</style>
+
 ![Launcher Plus Banner](media/banner.png)
 
 [![Version](https://img.shields.io/badge/version-1.1.0-blue)](https://github.com/PutraAdiJaya/any-launcher-plus)
@@ -17,6 +43,7 @@
 </div>
 
 ---
+![alt text](media/image.png)
 
 ## ✨ Features
 

@@ -459,5 +459,48 @@
     "cwd": "${workspaceFolder}",
     "platform": "win",
     "icon": "cloud-download"
+  },
+  {
+    "id": "github-desktop",
+    "label": "🐙 GitHub Desktop",
+    "program": "C:\\Users\\${env:USERNAME}\\AppData\\Local\\GitHubDesktop\\GitHubDesktop.exe",
+    "args": [],
+    "platform": "win",
+    "icon": "github"
+  },
+  {
+    "id": "github-desktop-repo",
+    "label": "🐙 Open in GitHub Desktop",
+    "program": "C:\\Users\\${env:USERNAME}\\AppData\\Local\\GitHubDesktop\\GitHubDesktop.exe",
+    "args": ["${workspaceFolder}"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "repo"
+  },
+  {
+    "id": "github-desktop-protocol",
+    "label": "🐙 GitHub Desktop (Protocol)",
+    "program": "cmd.exe",
+    "args": ["/c", "start", "github-windows://openRepo/${workspaceFolder}"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "link-external"
+  },
+  {
+    "id": "github-desktop-direct",
+    "label": "🐙 GitHub Desktop (Direct Path)",
+    "program": "C:\\Users\\Wijayadi Saputra\\AppData\\Local\\GitHubDesktop\\GitHubDesktop.exe",
+    "args": [],
+    "platform": "win",
+    "icon": "github-alt"
+  },
+  {
+    "id": "github-desktop-repo-direct",
+    "label": "🐙 Open Repo (Direct Path)",
+    "program": "C:\\Users\\Wijayadi Saputra\\AppData\\Local\\GitHubDesktop\\GitHubDesktop.exe",
+    "args": ["${workspaceFolder}"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "repo-forked"
   }
 ]
