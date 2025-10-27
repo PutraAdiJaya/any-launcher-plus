@@ -30,7 +30,7 @@
 
 ![Launcher Plus Banner](media/banner.png)
 
-[![Version](https://img.shields.io/badge/version-1.3.0-blue)](https://github.com/PutraAdiJaya/any-launcher-plus)
+[![Version](https://img.shields.io/badge/version-1.4.0-blue)](https://github.com/PutraAdiJaya/any-launcher-plus)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/d/PutraAdiJaya.any-launcher-plus?label=VS%20Code%20Downloads)](https://marketplace.visualstudio.com/items?itemName=PutraAdiJaya.any-launcher-plus)
 [![OpenVSX Downloads](https://img.shields.io/open-vsx/dt/PutraAdiJaya/any-launcher-plus?label=OpenVSX%20Downloads)](https://open-vsx.org/extension/PutraAdiJaya/any-launcher-plus)
@@ -43,7 +43,49 @@
 </div>
 
 ---
-![alt text](media/image.png) 
+![preview](media/image.png) 
+
+## 🎉 What's New in v1.4.0
+
+### 🔥 Built-in Default Shortcuts
+
+**No more manual configuration!** Launcher Plus now includes **50+ pre-configured shortcuts** for common development tasks:
+
+- ✅ **Terminal & Shell**: cmd, PowerShell, WSL, Git Bash
+- ✅ **NPM/Yarn**: install, start, test, dev, build
+- ✅ **Git**: status, log, and more
+- ✅ **Docker**: Docker Desktop, docker-compose
+- ✅ **Languages**: Python, Go, Rust, Java, .NET
+- ✅ **VS Code Extension**: compile, watch, package, publish (vsce/ovsx)
+- ✅ **Browsers**: Chrome with dev tools, localhost shortcuts
+- ✅ **System Tools**: Explorer, Task Manager
+
+**You only need to add YOUR custom shortcuts!** 🎯
+
+```json
+// .vscode/launcher-putra.json - Only your custom commands!
+[
+  {
+    "id": "my-deploy",
+    "label": "Deploy to Production",
+    "program": "cmd.exe",
+    "args": ["/c", "deploy.bat"],
+    "icon": "rocket"
+  }
+]
+```
+
+### ✨ My Shortcuts Group
+
+Your custom shortcuts automatically appear in a dedicated **"My Shortcuts"** group:
+- 📍 Positioned right below Favorites
+- 🎨 Strong pink color for visibility
+- ✨ Sparkle icon for easy identification
+- 🔍 Auto-detected (no configuration needed)
+
+📖 **[Read the Migration Guide](MIGRATION_GUIDE.md)** | 📚 **[Custom Shortcuts Guide](CUSTOM_SHORTCUTS_GUIDE.md)** | ✨ **[My Shortcuts Group](MY_SHORTCUTS_GROUP.md)**
+
+---
 
 ## ✨ Features
 

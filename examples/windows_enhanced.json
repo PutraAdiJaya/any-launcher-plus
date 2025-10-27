@@ -8,7 +8,9 @@
       "wsl",
       {
         "program": "code",
-        "args": ["${workspaceFolder}"]
+        "args": [
+          "${workspaceFolder}"
+        ]
       }
     ],
     "sequenceMode": "parallel",
@@ -23,7 +25,12 @@
       "task-manager",
       {
         "program": "cmd.exe",
-        "args": ["/c", "systeminfo", "&", "pause"]
+        "args": [
+          "/c",
+          "systeminfo",
+          "&",
+          "pause"
+        ]
       }
     ],
     "sequenceMode": "serial"
@@ -36,7 +43,12 @@
       "explorer-here",
       {
         "program": "cmd.exe",
-        "args": ["/c", "dir", "&", "pause"],
+        "args": [
+          "/c",
+          "dir",
+          "&",
+          "pause"
+        ],
         "cwd": "${workspaceFolder}"
       }
     ]

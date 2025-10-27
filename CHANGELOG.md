@@ -1,5 +1,59 @@
 # Changelog
 
+## [1.4.0] - 2024-01-15
+
+### 🔥 Major Features
+
+#### Built-in Default Shortcuts
+- **60+ pre-configured shortcuts** built directly into the extension
+- Zero configuration needed for common development tasks
+- Includes: Terminal, NPM, Git, Docker, Python, Go, Rust, Java, .NET, VS Code Extension Development, and more
+- Smart merging with user shortcuts (no duplicates)
+- User shortcuts take priority over defaults
+
+#### My Shortcuts Group
+- **New "My Shortcuts" group** for custom user shortcuts
+- Automatically detects shortcuts not in defaults
+- Positioned below Favorites with strong pink color
+- Sparkle icon (✨) for easy identification
+- Makes custom shortcuts stand out visually
+
+#### Cleaner Configuration
+- JSON config files now only need YOUR custom shortcuts
+- Default shortcuts are maintained in extension code
+- Automatic updates to defaults with extension updates
+- Faster loading with less file I/O
+
+#### Override System
+- Override any default shortcut by using the same ID
+- Custom shortcuts automatically replace defaults
+- Duplicate ID detection and warnings
+
+### 📚 Documentation
+- Added **CUSTOM_SHORTCUTS_GUIDE.md** - Complete guide for custom shortcuts
+- Added **MIGRATION_GUIDE.md** - Step-by-step migration from v1.3.0
+- Added **examples/custom-shortcuts-template.json** - Template with 10+ examples
+- Updated README with new features section
+
+### 🛠️ Technical Improvements
+- Added `DEFAULT_SHORTCUTS` constant with 50+ shortcuts
+- Modified `getConfigShortcuts()` for smart merging
+- Improved duplicate detection algorithm
+- Better logging for shortcut loading
+- Performance optimizations
+
+### 🐛 Bug Fixes
+- Fixed duplicate shortcut warnings
+- Improved shortcut loading performance
+- Better error handling for missing programs
+
+### 🔄 Migration
+- Backward compatible - existing configs still work
+- Optional cleanup to remove default shortcuts from JSON
+- Automated migration script available
+
+---
+
 ## [1.3.0] - 2025-10-27
 
 ### 🎉 Major Features

@@ -1,0 +1,89 @@
+[
+  {
+    "id": "example-custom-command",
+    "label": "Example: Custom Command",
+    "program": "cmd.exe",
+    "args": ["/c", "echo", "This is a custom command", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "star"
+  },
+  {
+    "id": "example-run-script",
+    "label": "Example: Run Custom Script",
+    "program": "",
+    "args": ["node", "scripts/my-script.js"],
+    "cwd": "${workspaceFolder}",
+    "icon": "play"
+  },
+  {
+    "id": "example-open-browser",
+    "label": "Example: Open in Browser",
+    "program": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "args": ["http://localhost:4200"],
+    "icon": "browser"
+  },
+  {
+    "id": "example-ssh-server",
+    "label": "Example: SSH to Server",
+    "program": "cmd.exe",
+    "args": ["/c", "ssh", "user@example.com"],
+    "icon": "lock"
+  },
+  {
+    "id": "example-docker-logs",
+    "label": "Example: Docker Logs",
+    "program": "",
+    "args": ["docker", "logs", "-f", "my-container"],
+    "cwd": "${workspaceFolder}",
+    "icon": "output"
+  },
+  {
+    "id": "example-override-npm-start",
+    "label": "Example: Override npm start",
+    "program": "cmd.exe",
+    "args": ["/c", "npm", "run", "start:custom"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "rocket"
+  },
+  {
+    "id": "example-python-venv",
+    "label": "Example: Activate Python venv",
+    "program": "cmd.exe",
+    "args": ["/c", ".venv\\Scripts\\activate", "&", "python", "main.py", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "symbol-method"
+  },
+  {
+    "id": "example-git-custom",
+    "label": "Example: Git Custom Workflow",
+    "program": "cmd.exe",
+    "args": ["/c", "git", "add", ".", "&&", "git", "commit", "-m", "Auto commit", "&&", "git", "push", "&", "pause"],
+    "cwd": "${workspaceFolder}",
+    "platform": "win",
+    "icon": "git-commit"
+  },
+  {
+    "id": "example-open-file",
+    "label": "Example: Open Specific File",
+    "program": "notepad.exe",
+    "args": ["${workspaceFolder}\\README.md"],
+    "platform": "win",
+    "icon": "file"
+  },
+  {
+    "id": "example-env-vars",
+    "label": "Example: With Environment Variables",
+    "program": "",
+    "args": ["node", "app.js"],
+    "cwd": "${workspaceFolder}",
+    "env": {
+      "NODE_ENV": "development",
+      "DEBUG": "true",
+      "PORT": "3000"
+    },
+    "icon": "settings-gear"
+  }
+]

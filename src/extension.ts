@@ -44,6 +44,485 @@ const CACHE_DURATION = 30000; // 30 seconds
 // Pin state management
 let pinnedShortcuts = new Set<string>();
 
+// Default shortcuts built into the extension
+const DEFAULT_SHORTCUTS: Shortcut[] = [
+  // Terminal & Shell
+  {
+    id: 'cmd',
+    label: 'Command Prompt',
+    program: 'cmd.exe',
+    args: [],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'terminal',
+  },
+  {
+    id: 'powershell',
+    label: 'PowerShell',
+    program: 'powershell.exe',
+    args: [],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'terminal-powershell',
+  },
+  {
+    id: 'wsl',
+    label: 'WSL',
+    program: 'wsl.exe',
+    args: [],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'terminal-linux',
+  },
+  {
+    id: 'git-bash',
+    label: 'Git Bash',
+    program: 'C:\\Program Files\\Git\\git-bash.exe',
+    args: [],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'source-control',
+  },
+
+  // System Tools
+  {
+    id: 'explorer-here',
+    label: 'Explorer (Current Folder)',
+    program: 'explorer.exe',
+    args: ['${workspaceFolder}'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'folder-opened',
+  },
+  {
+    id: 'task-manager',
+    label: 'Task Manager',
+    program: 'taskmgr.exe',
+    args: [],
+    platform: 'win',
+    icon: 'list-tree',
+  },
+
+  // REPL
+  {
+    id: 'node-repl',
+    label: 'Node.js REPL',
+    program: 'cmd.exe',
+    args: ['/c', 'node', '&', 'pause'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'symbol-method',
+  },
+  {
+    id: 'python-repl',
+    label: 'Python REPL',
+    program: 'cmd.exe',
+    args: ['/c', 'python', '&', 'pause'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'symbol-method',
+  },
+
+  // NPM Commands
+  {
+    id: 'npm-install',
+    label: 'npm install',
+    program: 'cmd.exe',
+    args: ['/c', 'npm', 'install', '&', 'pause'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'package',
+  },
+  {
+    id: 'npm-start',
+    label: 'npm start',
+    program: 'cmd.exe',
+    args: ['/c', 'npm', 'start'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'play',
+  },
+  {
+    id: 'npm-test',
+    label: 'npm test',
+    program: 'cmd.exe',
+    args: ['/c', 'npm', 'test', '&', 'pause'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'beaker',
+  },
+  {
+    id: 'npm-run-dev',
+    label: 'npm run dev',
+    program: '',
+    args: ['npm', 'run', 'dev'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'run',
+  },
+  {
+    id: 'npm-run-build',
+    label: 'npm run build',
+    program: '',
+    args: ['npm', 'run', 'build'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'tools',
+  },
+
+  // Yarn Commands
+  {
+    id: 'yarn-install',
+    label: 'yarn install',
+    program: 'cmd.exe',
+    args: ['/c', 'yarn', 'install', '&', 'pause'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'package',
+  },
+
+  // Git Commands
+  {
+    id: 'git-status',
+    label: 'Git Status',
+    program: 'cmd.exe',
+    args: ['/c', 'git', 'status', '&', 'pause'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'git-branch',
+  },
+  {
+    id: 'git-log',
+    label: 'Git Log (Graph)',
+    program: 'cmd.exe',
+    args: ['/c', 'git', 'log', '--oneline', '--graph', '--all', '&', 'pause'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'git-commit',
+  },
+
+  // Browsers & Dev Tools
+  {
+    id: 'chrome-dev',
+    label: 'Chrome (Dev Mode)',
+    program: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    args: ['--auto-open-devtools-for-tabs', 'http://localhost:3000'],
+    platform: 'win',
+    icon: 'browser',
+  },
+  {
+    id: 'localhost-3000',
+    label: 'Open localhost:3000',
+    program: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    args: ['http://localhost:3000'],
+    platform: 'win',
+    icon: 'preview',
+  },
+  {
+    id: 'localhost-8080',
+    label: 'Open localhost:8080',
+    program: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    args: ['http://localhost:8080'],
+    platform: 'win',
+    icon: 'preview',
+  },
+
+  // Docker
+  {
+    id: 'docker-desktop',
+    label: 'Docker Desktop',
+    program: 'C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe',
+    args: [],
+    platform: 'win',
+    icon: 'server-environment',
+  },
+  {
+    id: 'docker-compose-up',
+    label: 'docker-compose up',
+    program: '',
+    args: ['docker-compose', 'up'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'server-process',
+  },
+  {
+    id: 'docker-compose-down',
+    label: 'docker-compose down',
+    program: '',
+    args: ['docker-compose', 'down'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'debug-stop',
+  },
+
+  // Python
+  {
+    id: 'python-main',
+    label: 'python main.py',
+    program: '',
+    args: ['python', 'main.py'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'play',
+  },
+  {
+    id: 'django-runserver',
+    label: 'python manage.py runserver',
+    program: '',
+    args: ['python', 'manage.py', 'runserver'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'server',
+  },
+
+  // Go
+  {
+    id: 'go-run-main',
+    label: 'go run main.go',
+    program: '',
+    args: ['go', 'run', 'main.go'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'play',
+  },
+  {
+    id: 'go-build',
+    label: 'go build',
+    program: '',
+    args: ['go', 'build'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'tools',
+  },
+  {
+    id: 'go-test',
+    label: 'go test',
+    program: '',
+    args: ['go', 'test', './...'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'beaker',
+  },
+
+  // Rust
+  {
+    id: 'cargo-run',
+    label: 'cargo run',
+    program: '',
+    args: ['cargo', 'run'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'play',
+  },
+  {
+    id: 'cargo-build',
+    label: 'cargo build',
+    program: '',
+    args: ['cargo', 'build'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'tools',
+  },
+  {
+    id: 'cargo-test',
+    label: 'cargo test',
+    program: '',
+    args: ['cargo', 'test'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'beaker',
+  },
+
+  // Java
+  {
+    id: 'mvn-clean-install',
+    label: 'mvn clean install',
+    program: '',
+    args: ['mvn', 'clean', 'install'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'tools',
+  },
+  {
+    id: 'mvn-test',
+    label: 'mvn test',
+    program: '',
+    args: ['mvn', 'test'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'beaker',
+  },
+  {
+    id: 'gradle-build',
+    label: 'gradle build',
+    program: '',
+    args: ['gradlew.bat', 'build'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'tools',
+  },
+  {
+    id: 'gradle-test',
+    label: 'gradle test',
+    program: '',
+    args: ['gradlew.bat', 'test'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'beaker',
+  },
+
+  // .NET
+  {
+    id: 'dotnet-run',
+    label: 'dotnet run',
+    program: '',
+    args: ['dotnet', 'run'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'play',
+  },
+  {
+    id: 'dotnet-build',
+    label: 'dotnet build',
+    program: '',
+    args: ['dotnet', 'build'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'tools',
+  },
+  {
+    id: 'dotnet-test',
+    label: 'dotnet test',
+    program: '',
+    args: ['dotnet', 'test'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'beaker',
+  },
+
+  // Make
+  {
+    id: 'make',
+    label: 'make',
+    program: '',
+    args: ['make'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'tools',
+  },
+  {
+    id: 'make-clean',
+    label: 'make clean',
+    program: '',
+    args: ['make', 'clean'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'trash',
+  },
+
+  // VS Code Extension Development
+  {
+    id: 'npm-run-compile',
+    label: 'npm run compile',
+    program: '',
+    args: ['npm', 'run', 'compile'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'tools',
+  },
+  {
+    id: 'npm-run-watch',
+    label: 'npm run watch',
+    program: '',
+    args: ['npm', 'run', 'watch'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'eye',
+  },
+  {
+    id: 'npm-run-package',
+    label: 'npm run package',
+    program: '',
+    args: ['npm', 'run', 'package'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'package',
+  },
+  {
+    id: 'npm-run-lint',
+    label: 'npm run lint',
+    program: '',
+    args: ['npm', 'run', 'lint'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'search',
+  },
+  {
+    id: 'npm-run-format',
+    label: 'npm run format',
+    program: '',
+    args: ['npm', 'run', 'format'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'symbol-color',
+  },
+  {
+    id: 'npm-publish-ovsx',
+    label: 'npm run publish:ovsx',
+    program: '',
+    args: ['npm', 'run', 'publish:ovsx'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'cloud-upload',
+  },
+  {
+    id: 'npm-publish-vsce',
+    label: 'npm run publish:vsce',
+    program: '',
+    args: ['npm', 'run', 'publish:vsce'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'rocket',
+  },
+  {
+    id: 'vsce-package',
+    label: 'vsce package',
+    program: '',
+    args: ['vsce', 'package'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'package',
+  },
+  {
+    id: 'vsce-publish',
+    label: 'vsce publish',
+    program: '',
+    args: ['vsce', 'publish'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'rocket',
+  },
+  {
+    id: 'ovsx-publish',
+    label: 'ovsx publish',
+    program: '',
+    args: ['ovsx', 'publish'],
+    cwd: '${workspaceFolder}',
+    platform: 'win',
+    icon: 'cloud-upload',
+  },
+
+  // Network & Utilities
+  {
+    id: 'port-check',
+    label: 'Check Port 3000',
+    program: 'cmd.exe',
+    args: ['/c', 'netstat', '-an', '|', 'findstr', ':3000', '&', 'pause'],
+    platform: 'win',
+    icon: 'plug',
+  },
+];
+
 // Load pinned shortcuts from storage
 function loadPinnedShortcuts(context: vscode.ExtensionContext): void {
   const stored = context.globalState.get<string[]>('launcher.pinnedShortcuts', []);
@@ -107,10 +586,40 @@ function getConfigShortcuts(): Shortcut[] {
   const cfg = vscode.workspace.getConfiguration();
   const userShortcuts = cfg.get<Shortcut[]>('launcher.shortcuts', []) || [];
 
-  // Load editor-specific shortcuts from JSON files
+  // Load editor-specific shortcuts from JSON files (custom user shortcuts)
   const editorShortcuts = loadEditorSpecificShortcuts();
 
-  return [...userShortcuts, ...editorShortcuts];
+  // Merge: Default shortcuts + User shortcuts (user shortcuts override defaults by ID)
+  const allShortcuts = [...DEFAULT_SHORTCUTS];
+  const userAndEditorShortcuts = [...userShortcuts, ...editorShortcuts];
+
+  // Track IDs to prevent duplicates - user shortcuts take precedence
+  const seenIds = new Set<string>();
+
+  // First, add all user/editor shortcuts (they have priority)
+  const finalShortcuts: Shortcut[] = [];
+  for (const shortcut of userAndEditorShortcuts) {
+    if (!seenIds.has(shortcut.id)) {
+      seenIds.add(shortcut.id);
+      finalShortcuts.push(shortcut);
+    } else {
+      console.warn(`[Launcher] ⚠️ Duplicate shortcut ID found: ${shortcut.id} - skipping duplicate`);
+    }
+  }
+
+  // Then, add default shortcuts that don't conflict
+  for (const shortcut of allShortcuts) {
+    if (!seenIds.has(shortcut.id)) {
+      seenIds.add(shortcut.id);
+      finalShortcuts.push(shortcut);
+    }
+  }
+
+  console.log(
+    `[Launcher] 📋 Loaded ${finalShortcuts.length} shortcuts (${DEFAULT_SHORTCUTS.length} defaults, ${userAndEditorShortcuts.length} custom)`
+  );
+
+  return finalShortcuts;
 }
 
 function loadEditorSpecificShortcuts(): Shortcut[] {
@@ -1102,7 +1611,13 @@ class ShortcutsProvider implements vscode.TreeDataProvider<GroupItem | ShortcutI
       groups.push(new GroupItem('Favorites', pinnedShortcutsList, 'favorites'));
     }
 
-    // 2. Categorize all shortcuts by type
+    // 2. My Shortcuts group (custom user shortcuts from JSON files only, not auto-discovered)
+    const customShortcuts = this.getCustomShortcuts(configShortcuts);
+    if (customShortcuts.length > 0) {
+      groups.push(new GroupItem('My Shortcuts', customShortcuts, 'custom'));
+    }
+
+    // 3. Categorize all shortcuts by type
     const categorizedShortcuts = this.categorizeShortcuts(filteredShortcuts);
 
     // Add categorized groups
@@ -1191,6 +1706,16 @@ class ShortcutsProvider implements vscode.TreeDataProvider<GroupItem | ShortcutI
     } finally {
       autoDiscoveryCache.isLoading = false;
     }
+  }
+
+  private getCustomShortcuts(shortcuts: Shortcut[]): Shortcut[] {
+    // Get IDs of all default shortcuts
+    const defaultIds = new Set(DEFAULT_SHORTCUTS.map((s) => s.id));
+
+    // Filter shortcuts that are NOT in defaults (custom user shortcuts from JSON files)
+    // Note: This only includes shortcuts from configShortcuts (user JSON files),
+    // NOT auto-discovered shortcuts
+    return shortcuts.filter((s) => !defaultIds.has(s.id));
   }
 
   private categorizeShortcuts(shortcuts: Shortcut[]): {
@@ -1374,6 +1899,8 @@ class GroupItem extends vscode.TreeItem {
     switch (this.groupType) {
       case 'favorites':
         return new vscode.ThemeIcon('star-full', new vscode.ThemeColor('charts.yellow'));
+      case 'custom':
+        return new vscode.ThemeIcon('sparkle', new vscode.ThemeColor('charts.pink'));
       case 'deployment':
         return new vscode.ThemeIcon('rocket', new vscode.ThemeColor('charts.red'));
       case 'development':
@@ -1446,6 +1973,12 @@ class ShortcutItem extends vscode.TreeItem {
     const id = s.id.toLowerCase();
     const label = (s.label || '').toLowerCase();
     const program = (s.program || '').toLowerCase();
+
+    // Custom shortcuts - highest priority (not in defaults)
+    const defaultIds = new Set(DEFAULT_SHORTCUTS.map((ds) => ds.id));
+    if (!defaultIds.has(s.id)) {
+      return 'custom';
+    }
 
     // SSH/Remote - highest priority for SSH connections
     if (
@@ -1751,6 +2284,8 @@ class ShortcutItem extends vscode.TreeItem {
 
   private getGroupColor(group: string): vscode.ThemeColor {
     switch (group) {
+      case 'custom':
+        return new vscode.ThemeColor('charts.pink'); // Strong Pink for Custom Shortcuts
       case 'extension':
         return new vscode.ThemeColor('testing.iconQueued'); // Orange for VS Code Extensions
       case 'ssh':
@@ -1796,6 +2331,8 @@ class ShortcutItem extends vscode.TreeItem {
 
   private getGroupIconName(group: string): string {
     switch (group) {
+      case 'custom':
+        return 'sparkle'; // Sparkle icon for Custom Shortcuts
       case 'extension':
         return 'extensions'; // Extensions icon for VS Code Extension Development
       case 'ssh':
